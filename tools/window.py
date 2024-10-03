@@ -63,14 +63,15 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         self.lineEditpassword: QLineEdit
         # tableWidget
         self.tableWidget: QTableWidget
-        # 记录当前选中的行对应的uuid
-        # self.uuid: list = None
         # 记录当前数据库中的数据
         self.data: list = None
         # 数据库对象
-        self.db = MyDB()
+        self.__init_db__()
         # 初始化数据库中数据加入tableWidget
         self._refresh_tableWidget(self._refresh_all_info())
+
+    def __init_db__(self):
+        self.db = MyDB()
 
     def __init_systemTray(self, app):
         """
@@ -114,12 +115,26 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
             return False
         return False
 
-    def _refresh_all_info(self):
+    def _choose_dir(self):
+        """
+        选择文件夹
+        """
+        # 选择文件夹
+        dir_name = QFileDialog.getExistingDirectory(self, "选择文件夹")
+        if dir_name:
+            return dir_name
+        else:
+            return False
+
+    def _refresh_all_info(self, uuid: bool = True):
         """
         获取所有数据库表中的数据
         """
         self.data = self.db.fetch_all()
-        return deepcopy(self.data)
+        if uuid:
+            return deepcopy(self.data)
+        else:
+            return [i[1:] for i in deepcopy(self.data)]
 
     def _get_lineEdit_data(self):
         """
@@ -134,8 +149,7 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
 
     def test(self):
         # 测试 弹出对话框
-        self.lineEdituuid.setText("123456")
-        s = self._get_lineEdit_data()
+        s = self._choose_dir()
         print(s)
 
     def import_txt(self):
@@ -205,8 +219,50 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         finally:
             self._refresh_tableWidget(self._refresh_all_info())
 
-    def export_txt(self): ...
-    def export_xls(self): ...
+    def export_txt(self):
+        """
+        导出txt
+        """
+        dir: str = self._choose_dir()
+        if not dir:
+            return
+        try:
+            import os
+
+            flag = ""
+            file_name = dir + "/data{}.txt"
+            while os.path.exists(file_name.format(flag)):
+                flag = flag + 1 if flag else 1
+
+            with open(file_name.format(flag), "w", encoding="utf-8") as f:
+                tmp_data = self._refresh_all_info(False)
+                for i in tmp_data:
+                    f.write("\t".join(i) + "\n")
+        except Exception as e:
+            QMessageBox.critical(self, "错误", str(e), QMessageBox.Yes)
+
+    def export_xls(self):
+        """
+        导出xls
+        """
+        dir = self._choose_dir()
+        if not dir:
+            return
+        try:
+            import os
+            import pandas as pd
+
+            flag = ""
+            file_name = dir + "/data{}.xlsx"
+            while os.path.exists(file_name.format(flag)):
+                flag = flag + 1 if flag else 1
+
+            tmp_data = self._refresh_all_info(False)
+            data = pd.DataFrame(tmp_data, columns=["名称", "账号", "密码", "备注"])
+            data.to_excel(file_name.format(flag), index=False)
+        except Exception as e:
+            QMessageBox.critical(self, "错误", str(e), QMessageBox.Yes)
+
     def modify(self):
         """
         修改或新增
@@ -235,6 +291,9 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         self.clear()
 
     def clear(self):
+        """
+        清空lineEdit
+        """
         self.lineEdituuid.clear()
         self.lineEditname.clear()
         self.lineEditremarks.clear()
@@ -243,6 +302,9 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         self._refresh_tableWidget(self._refresh_all_info())
 
     def query(self):
+        """
+        查询并显示
+        """
         data = self._get_lineEdit_data()
         ans = self.db.fetch(*data)
         all_info = self._refresh_all_info()
@@ -251,6 +313,10 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
                 all_info.remove(i)
         self.data = [*ans, *all_info]
         self._refresh_tableWidget(self.data)
+        
+        l_ans = len(ans)
+        for i in range(l_ans):
+            self.tableWidget.selectRow(i)
 
     def cell_clicked(self, row, col):
         # 获取当前tablewidget中所有被选中的单元格
@@ -261,9 +327,10 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         rows = list(set(rows))
         if len(rows) != 1:
             return
-        row = rows[0]
-        self.lineEdituuid.setText(self.data[row][0])
-        self.lineEditname.setText(self.data[row][1])
-        self.lineEditaccount.setText(self.data[row][2])
-        self.lineEditpassword.setText(self.data[row][3])
-        self.lineEditremarks.setText(self.data[row][4])
+        else:
+            row = rows[0]
+            self.lineEdituuid.setText(self.data[row][0])
+            self.lineEditname.setText(self.data[row][1])
+            self.lineEditaccount.setText(self.data[row][2])
+            self.lineEditpassword.setText(self.data[row][3])
+            self.lineEditremarks.setText(self.data[row][4])
