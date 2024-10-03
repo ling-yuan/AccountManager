@@ -10,6 +10,7 @@ pyqt 账号密码管理软件
 
 ## 截图
 ![截图1](https://github.com/ling-yuan/AccountManager/blob/main/img_readme/mainWindow.png)
+
 ![截图2](https://github.com/ling-yuan/AccountManager/blob/main/img_readme/systemTray.png)
 
 ## 代办
