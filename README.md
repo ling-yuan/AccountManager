@@ -9,8 +9,11 @@ pyqt 账号密码管理软件
 软件保存的数据在本地，使用sqlite数据库，不需要联网，无需担心数据泄露
 
 ## 截图
+
+### 主界面
 ![截图1](https://github.com/ling-yuan/AccountManager/blob/main/img_readme/mainWindow.png)
 
+### 系统托盘
 ![截图2](https://github.com/ling-yuan/AccountManager/blob/main/img_readme/systemTray.png)
 
 ## 代办
