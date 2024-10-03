@@ -17,6 +17,7 @@ class SystemTrayIcon(QSystemTrayIcon):
         self.setIcon(QIcon("./img/safe.png"))
         self.setToolTip("密码管理器")
         self.trayMenu = QMenu()
+        self.trayMenu.addAction("显示", self.mainWindow.show)
         self.trayMenu.addAction("退出", self.mainWindow.app.quit)
         self.setContextMenu(self.trayMenu)
 
@@ -25,6 +26,9 @@ class SystemTrayIcon(QSystemTrayIcon):
         self.activated.connect(self.click_event)
 
     def click_event(self, event):
+        # 鼠标左键点击事件
+        if event == QSystemTrayIcon.Trigger:
+            self.mainWindow.show()
         # 双击事件
         if event == QSystemTrayIcon.DoubleClick:
             self.mainWindow.show()

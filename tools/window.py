@@ -29,7 +29,6 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         """
         绑定事件
         """
-        self.actiontest.triggered.connect(self.test)
         self.importtxt.triggered.connect(self.import_txt)
         self.importxls.triggered.connect(self.import_xls)
         self.exporttxt.triggered.connect(self.export_txt)
@@ -43,8 +42,6 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         self.tableWidget.cellClicked.connect(self.cell_clicked)
 
     def __initialization__(self):
-        # 测试菜单
-        self.actiontest: QAction
         # 菜单
         self.importtxt: QAction
         self.importxls: QAction
@@ -146,11 +143,6 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         password = self.lineEditpassword.text()
         remarks = self.lineEditremarks.text()
         return (uuid, name, account, password, remarks)
-
-    def test(self):
-        # 测试 弹出对话框
-        s = self._choose_dir()
-        print(s)
 
     def import_txt(self):
         """
@@ -313,7 +305,7 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
                 all_info.remove(i)
         self.data = [*ans, *all_info]
         self._refresh_tableWidget(self.data)
-        
+
         l_ans = len(ans)
         for i in range(l_ans):
             self.tableWidget.selectRow(i)

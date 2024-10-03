@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'c:\Users\lingyuan\Desktop\AccountManage\tools\mainWindow.ui'
+# Form implementation generated from reading ui file 'd:\Code\Project\python\AccountManager\tools\mainWindow.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.9
 #
@@ -101,8 +101,6 @@ class Ui_MainWindow(object):
         self.submenu1.setObjectName("submenu1")
         self.submenu2 = QtWidgets.QMenu(self.menu)
         self.submenu2.setObjectName("submenu2")
-        self.menu_2 = QtWidgets.QMenu(self.menuBar)
-        self.menu_2.setObjectName("menu_2")
         MainWindow.setMenuBar(self.menuBar)
         self.importtxt = QtWidgets.QAction(MainWindow)
         icon1 = QtGui.QIcon()
@@ -129,9 +127,7 @@ class Ui_MainWindow(object):
         self.menu.addAction(self.submenu1.menuAction())
         self.menu.addAction(self.submenu2.menuAction())
         self.menu.addSeparator()
-        self.menu_2.addAction(self.actiontest)
         self.menuBar.addAction(self.menu.menuAction())
-        self.menuBar.addAction(self.menu_2.menuAction())
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -161,7 +157,6 @@ class Ui_MainWindow(object):
         self.menu.setTitle(_translate("MainWindow", "文件"))
         self.submenu1.setTitle(_translate("MainWindow", "导入"))
         self.submenu2.setTitle(_translate("MainWindow", "导出"))
-        self.menu_2.setTitle(_translate("MainWindow", "测试"))
         self.importtxt.setText(_translate("MainWindow", "txt"))
         self.exporttxt.setText(_translate("MainWindow", "txt"))
         self.exportxls.setText(_translate("MainWindow", "xls(x)"))
