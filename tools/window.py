@@ -94,10 +94,8 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         """
         选择文件
         """
-        # 弹出警告框
         m = QMessageBox.warning(self, "警告", info, QMessageBox.Yes | QMessageBox.No)
         if m == QMessageBox.Yes:
-            # 选择文件
             file_name, _ = QFileDialog.getOpenFileName(self, "选择文件", "", filter)
             if file_name:
                 flag = file_type_choose(file_name.rsplit(".", 1)[-1])
@@ -116,7 +114,6 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         """
         选择文件夹
         """
-        # 选择文件夹
         dir_name = QFileDialog.getExistingDirectory(self, "选择文件夹")
         if dir_name:
             return dir_name
@@ -190,20 +187,31 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
             return
 
         try:
-            from numpy import nan
-            import pandas as pd
+            import xlrd
 
             tmp_info = []
+            book = xlrd.open_workbook(file_name)
+            sheet = book.sheet_by_index(0)
+            head_dict = {
+                "名称": -1,
+                "账号": -1,
+                "密码": -1,
+                "备注": -1,
+            }
+            # 遍历列名，获取列名对应的列索引
+            for i in range(sheet.ncols):
+                if sheet.cell_value(0, i) in head_dict:
+                    head_dict[sheet.cell_value(0, i)] = i
+            # 遍历所有行，获取对应列的数据
+            for i in range(1, sheet.nrows):
+                tmp = []
+                for j in ["名称", "账号", "密码", "备注"]:
+                    if head_dict[j] == -1:
+                        tmp.append("")
+                    else:
+                        tmp.append(sheet.cell_value(i, head_dict[j]).strip())
+                tmp_info.append(tuple(tmp))
 
-            data = pd.read_excel(file_name, dtype=str)
-            for i in range(len(data)):
-                t = [
-                    str(data.loc[i, "名称"]).strip() if data.loc[i, "名称"] is not nan else "",
-                    str(data.loc[i, "账号"]).strip() if data.loc[i, "账号"] is not nan else "",
-                    str(data.loc[i, "密码"]).strip() if data.loc[i, "密码"] is not nan else "",
-                    str(data.loc[i, "备注"]).strip() if data.loc[i, "备注"] is not nan else "",
-                ]
-                tmp_info.append(tuple(t))
             self.db.clear_table()
             self.db.insert_many_data(tmp_info)
         except Exception as e:
@@ -242,16 +250,31 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
             return
         try:
             import os
-            import pandas as pd
+            import xlwt
 
             flag = ""
-            file_name = dir + "/data{}.xlsx"
+            file_name = dir + "/data{}.xls"
             while os.path.exists(file_name.format(flag)):
                 flag = flag + 1 if flag else 1
 
+            book = xlwt.Workbook()
+            sheet1 = book.add_sheet("账号信息")
+            # 表头
+            sheet1.row(0).height_mismatch = True  # 允许行高自定义
+            sheet1.row(0).height = 20 * 15  # 行高以 1/20 个点为单位
+            head_list = ["名称", "账号", "密码", "备注"]
+            for i in range(len(head_list)):
+                sheet1.write(0, i, head_list[i])
+                sheet1.col(i).width = 256 * 50
+            # 表内容
             tmp_data = self._refresh_all_info(False)
-            data = pd.DataFrame(tmp_data, columns=["名称", "账号", "密码", "备注"])
-            data.to_excel(file_name.format(flag), index=False)
+            for i in range(1, len(tmp_data) + 1):
+                for j in range(4):
+                    sheet1.write(i, j, tmp_data[i - 1][j])
+                sheet1.row(i).height_mismatch = True
+                sheet1.row(i).height = 20 * 15
+            book.save(file_name.format(flag))
+
         except Exception as e:
             QMessageBox.critical(self, "错误", str(e), QMessageBox.Yes)
 
