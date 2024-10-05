@@ -283,6 +283,8 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         修改或新增
         """
         data = self._get_lineEdit_data()
+        if not any(data):
+            return
         if data[0]:
             self.db.update_data(data[0], data[1:])
         else:
@@ -321,6 +323,8 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         查询并显示
         """
         data = self._get_lineEdit_data()
+        if not any(data):
+            return
         ans = self.db.fetch(*data)
         all_info = self._refresh_all_info()
         for i in ans:
