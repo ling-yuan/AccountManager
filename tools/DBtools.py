@@ -1,8 +1,13 @@
+import os
 import sqlite3
+import tempfile
+from tools.config import Config
+from tools.cryption import Cryption
 
 
 class MyDB:
     def __init__(self):
+        self.cryption = Cryption()
         self._init_config()
         self._init_table()
 
@@ -10,19 +15,34 @@ class MyDB:
         """
         读取config.json文件，获取配置
         """
-        import json
+        self._config = Config()
+        self._db_path = self._config.db_path
+        self.tmp_db_path = ""
 
-        with open("./info/config.json", "r") as f:
-            self._config = json.load(f)
-        self._db_path = self._config["db_path"]
+        if os.path.exists(self._db_path):
+            # 解密, 写入临时文件
+            data = self.cryption.dectypt_file(self._db_path)
+            with tempfile.NamedTemporaryFile(delete=False) as tmp_db:
+                tmp_db.write(data)
+                self.tmp_db_path = tmp_db.name
+        else:
+            conn, cur = self._connect_db(self._db_path)
+            conn.close()
+            with open(self._db_path, "rb") as f:
+                data = f.read()
+            with tempfile.NamedTemporaryFile(delete=False) as tmp_db:
+                tmp_db.write(data)
+                self.tmp_db_path = tmp_db.name
+            with open(self._db_path, "wb") as f:
+                f.write(self.cryption.encrypt_file(self._db_path))
 
-    def _connect_db(self):
+    def _connect_db(self, path: str):
         """
         连接数据库
 
         :return: 连接对象, 游标对象
         """
-        conn = sqlite3.connect(self._db_path)
+        conn = sqlite3.connect(path)
         cur = conn.cursor()
         return conn, cur
 
@@ -30,7 +50,7 @@ class MyDB:
         """
         初始化数据表
         """
-        conn, cur = self._connect_db()
+        conn, cur = self._connect_db(self.tmp_db_path)
         create_info_table = """
             CREATE TABLE IF NOT EXISTS `information`(
                `uuid` CHAR(36) PRIMARY KEY,
@@ -52,7 +72,7 @@ class MyDB:
         :param args: 参数，默认为None
         :return: 执行结果
         """
-        conn, cur = self._connect_db()
+        conn, cur = self._connect_db(self.tmp_db_path)
         rows = None
         if args == None:
             rows = cur.execute(sql)
@@ -65,6 +85,7 @@ class MyDB:
                 raise TypeError("args must be tuple or list")
         conn.commit()
         conn.close()
+        self._save_db()
         return rows
 
     def _generate_uuid(self):
@@ -82,7 +103,7 @@ class MyDB:
         查询所有数据
         """
         sql = "SELECT * FROM information"
-        conn, cur = self._connect_db()
+        conn, cur = self._connect_db(self.tmp_db_path)
         cur.execute(sql)
         result = cur.fetchall()
         conn.close()
@@ -118,7 +139,7 @@ class MyDB:
             data.append("%" + remark + "%")
 
         sql = sql.rstrip(" AND ")
-        conn, cur = self._connect_db()
+        conn, cur = self._connect_db(self.tmp_db_path)
         cur.execute(sql, data)
         result = cur.fetchall()
         conn.close()
@@ -174,3 +195,15 @@ class MyDB:
         """
         sql = "DELETE FROM information WHERE uuid = ?"
         return self._execute_sql(sql, (uuid,))
+
+    def _save_db(self):
+        # 将临时数据库加密
+        with open(self._db_path, "wb") as f:
+            f.write(self.cryption.encrypt_file(self.tmp_db_path))
+
+    # 实例回收时，删除临时数据库
+    def __del__(self):
+        os.remove(self.tmp_db_path)
+
+    def _get_db_bytes(self):
+        return self.cryption.dectypt_file(self.tmp_db_path)
