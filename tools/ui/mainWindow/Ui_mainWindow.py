@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'd:\Code\Project\python\AccountManager\tools\mainWindow.ui'
+# Form implementation generated from reading ui file 'd:\Code\Project\python\AccountManager\tools\ui\mainWindow\mainWindow.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.9
 #
@@ -101,6 +101,8 @@ class Ui_MainWindow(object):
         self.submenu1.setObjectName("submenu1")
         self.submenu2 = QtWidgets.QMenu(self.menu)
         self.submenu2.setObjectName("submenu2")
+        self.menu_2 = QtWidgets.QMenu(self.menuBar)
+        self.menu_2.setObjectName("menu_2")
         MainWindow.setMenuBar(self.menuBar)
         self.importtxt = QtWidgets.QAction(MainWindow)
         icon1 = QtGui.QIcon()
@@ -120,6 +122,12 @@ class Ui_MainWindow(object):
         self.importxls.setObjectName("importxls")
         self.actiontest = QtWidgets.QAction(MainWindow)
         self.actiontest.setObjectName("actiontest")
+        self.actionSetAutoOpen = QtWidgets.QAction(MainWindow)
+        self.actionSetAutoOpen.setObjectName("actionSetAutoOpen")
+        self.actionRegister = QtWidgets.QAction(MainWindow)
+        self.actionRegister.setObjectName("actionRegister")
+        self.actionExit = QtWidgets.QAction(MainWindow)
+        self.actionExit.setObjectName("actionExit")
         self.submenu1.addAction(self.importtxt)
         self.submenu1.addAction(self.importxls)
         self.submenu2.addAction(self.exporttxt)
@@ -127,7 +135,11 @@ class Ui_MainWindow(object):
         self.menu.addAction(self.submenu1.menuAction())
         self.menu.addAction(self.submenu2.menuAction())
         self.menu.addSeparator()
+        self.menu_2.addAction(self.actionSetAutoOpen)
+        self.menu_2.addAction(self.actionRegister)
+        self.menu_2.addAction(self.actionExit)
         self.menuBar.addAction(self.menu.menuAction())
+        self.menuBar.addAction(self.menu_2.menuAction())
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -157,8 +169,12 @@ class Ui_MainWindow(object):
         self.menu.setTitle(_translate("MainWindow", "文件"))
         self.submenu1.setTitle(_translate("MainWindow", "导入"))
         self.submenu2.setTitle(_translate("MainWindow", "导出"))
+        self.menu_2.setTitle(_translate("MainWindow", "设置"))
         self.importtxt.setText(_translate("MainWindow", "txt"))
         self.exporttxt.setText(_translate("MainWindow", "txt"))
         self.exportxls.setText(_translate("MainWindow", "xls(x)"))
         self.importxls.setText(_translate("MainWindow", "xls(x)"))
         self.actiontest.setText(_translate("MainWindow", "test"))
+        self.actionSetAutoOpen.setText(_translate("MainWindow", "开机自启动"))
+        self.actionRegister.setText(_translate("MainWindow", "将显示界面选项注册至鼠标右键"))
+        self.actionExit.setText(_translate("MainWindow", "退出"))

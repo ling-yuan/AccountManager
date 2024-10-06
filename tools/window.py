@@ -10,8 +10,8 @@ from PyQt5.QtWidgets import (
     QTableWidgetItem,
     QApplication,
 )
-from tools.ui.Ui_mainWindow import Ui_MainWindow
-from tools.ui.Ui_systemTray import SystemTrayIcon
+from tools.ui.mainWindow.Ui_mainWindow import Ui_MainWindow
+from tools.ui.systemTray.Ui_systemTray import SystemTrayIcon
 from tools.db.DBtools import MyDB
 
 
@@ -33,6 +33,9 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         self.importxls.triggered.connect(self.import_xls)
         self.exporttxt.triggered.connect(self.export_txt)
         self.exportxls.triggered.connect(self.export_xls)
+        self.actionSetAutoOpen.triggered.connect(self.set_auto_open)
+        self.actionRegister.triggered.connect(self.register_right_click)
+        self.actionExit.triggered.connect(self.exit_app)
 
         self.pushButtonmodify.clicked.connect(self.modify)
         self.pushButtondelete.clicked.connect(self.delete)
@@ -47,6 +50,9 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         self.importxls: QAction
         self.exporttxt: QAction
         self.exportxls: QAction
+        self.actionSetAutoOpen: QAction
+        self.actionRegister: QAction
+        self.actionExit: QAction
         # Button
         self.pushButtonmodify: QPushButton
         self.pushButtondelete: QPushButton
@@ -277,6 +283,13 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
 
         except Exception as e:
             QMessageBox.critical(self, "错误", str(e), QMessageBox.Yes)
+
+    def set_auto_open(self): ...
+
+    def register_right_click(self): ...
+
+    def exit_app(self):
+        self.app.quit()
 
     def modify(self):
         """
