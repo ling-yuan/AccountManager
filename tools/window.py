@@ -10,9 +10,9 @@ from PyQt5.QtWidgets import (
     QTableWidgetItem,
     QApplication,
 )
-from tools.Ui_mainWindow import Ui_MainWindow
-from tools.Ui_systemTray import SystemTrayIcon
-from tools.DBtools import MyDB
+from tools.ui.Ui_mainWindow import Ui_MainWindow
+from tools.ui.Ui_systemTray import SystemTrayIcon
+from tools.db.DBtools import MyDB
 
 
 class MyMainWindow(QMainWindow, Ui_MainWindow):

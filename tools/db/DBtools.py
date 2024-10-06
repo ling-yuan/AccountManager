@@ -2,7 +2,7 @@ import os
 import sqlite3
 import tempfile
 from tools.config import Config
-from tools.cryption import Cryption
+from tools.db.cryption import Cryption
 
 
 class MyDB:
