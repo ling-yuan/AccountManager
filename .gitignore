@@ -163,6 +163,8 @@ cython_debug/
 
 # local sqlite
 info/*.db
+info/info
+info/key.key
 
 # temporary files
 tmp/*
