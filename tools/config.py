@@ -32,6 +32,15 @@ class Config:
         self.save()
 
     @property
+    def auto_start(self) -> bool:
+        return self._config.get("auto_start", False)
+
+    @auto_start.setter
+    def auto_start(self, auto_start: bool):
+        self._config["auto_start"] = auto_start
+        self.save()
+
+    @property
     def key(self) -> bytes:
         tmp_key: bytes = self._config.get("key", b"")
         return tmp_key

@@ -1,3 +1,4 @@
 {
-    "db_path": "./info/info"
+    "db_path": "./info/info",
+    "auto_start": false
 }

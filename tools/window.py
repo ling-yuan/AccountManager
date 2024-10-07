@@ -9,6 +9,7 @@ from PyQt5.QtWidgets import (
     QFileDialog,
     QTableWidgetItem,
     QApplication,
+    QProgressBar,
 )
 from tools.ui.mainWindow.Ui_mainWindow import Ui_MainWindow
 from tools.ui.systemTray.Ui_systemTray import SystemTrayIcon
@@ -66,6 +67,9 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         self.lineEditpassword: QLineEdit
         # tableWidget
         self.tableWidget: QTableWidget
+        # 进度条
+        self.progressBar: QProgressBar
+        self.progressBar.setVisible(False)
         # 记录当前数据库中的数据
         self.data: list = None
         # 数据库对象
@@ -146,6 +150,12 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         password = self.lineEditpassword.text()
         remarks = self.lineEditremarks.text()
         return (uuid, name, account, password, remarks)
+
+    def _change_visible(self, qwidget):
+        """
+        设置控件显示
+        """
+        qwidget.setVisible(not qwidget.isVisible())
 
     def import_txt(self):
         """
@@ -298,27 +308,41 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         data = self._get_lineEdit_data()
         if not any(data):
             return
+        self._change_visible(self.progressBar)
+        self.progressBar.setValue(20)
         if data[0]:
             self.db.update_data(data[0], data[1:])
         else:
             self.db.insert_data(data[1:])
+        self.progressBar.setValue(40)
         self._refresh_tableWidget(self._refresh_all_info())
+        self.progressBar.setValue(65)
         self.clear()
+        self.progressBar.setValue(100)
+        self._change_visible(self.progressBar)
 
     def delete(self):
         """
         删除
         """
+        self._change_visible(self.progressBar)
+        self.progressBar.setValue(5)
         t = self.tableWidget.selectedItems()
         rows = []
         for i in t:
             rows.append(i.row())
+        self.progressBar.setValue(15)
         rows = list(set(rows))
         uuid_list = [self.data[i][0] for i in rows]
+        self.progressBar.setValue(35)
         for i in uuid_list:
             self.db.delete_data(i)
+        self.progressBar.setValue(75)
         self._refresh_tableWidget(self._refresh_all_info())
+        self.progressBar.setValue(95)
         self.clear()
+        self.progressBar.setValue(100)
+        self._change_visible(self.progressBar)
 
     def clear(self):
         """
@@ -338,17 +362,23 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         data = self._get_lineEdit_data()
         if not any(data):
             return
+        self._change_visible(self.progressBar)
+        self.progressBar.setValue(5)
         ans = self.db.fetch(*data)
+        self.progressBar.setValue(45)
         all_info = self._refresh_all_info()
         for i in ans:
             if i in all_info:
                 all_info.remove(i)
+        self.progressBar.setValue(70)
         self.data = [*ans, *all_info]
         self._refresh_tableWidget(self.data)
-
+        self.progressBar.setValue(85)
         l_ans = len(ans)
         for i in range(l_ans):
             self.tableWidget.selectRow(i)
+        self.progressBar.setValue(100)
+        self._change_visible(self.progressBar)
 
     def cell_clicked(self, row, col):
         # 获取当前tablewidget中所有被选中的单元格
