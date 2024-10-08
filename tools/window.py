@@ -14,14 +14,17 @@ from PyQt5.QtWidgets import (
 from tools.ui.mainWindow.Ui_mainWindow import Ui_MainWindow
 from tools.ui.systemTray.Ui_systemTray import SystemTrayIcon
 from tools.db.DBtools import MyDB
+from tools.config import Config
 
 
 class MyMainWindow(QMainWindow, Ui_MainWindow):
 
-    def __init__(self, app: QApplication, parent=None):
+    def __init__(self, app: QApplication, file_path: str, parent=None):
         super(MyMainWindow, self).__init__(parent)
         self.setupUi(self)
         self.app = app
+        self.file_path = file_path
+        self.file_folder = file_path.rsplit("\\", 1)[0]
         self._bound()
         self.__initialization__()
         self.__init_systemTray(app)
@@ -73,12 +76,20 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         # 记录当前数据库中的数据
         self.data: list = None
         # 数据库对象
-        self.__init_db__()
+        self.db = MyDB()
+        # 设置对象
+        self.config = Config()
         # 初始化数据库中数据加入tableWidget
         self._refresh_tableWidget(self._refresh_all_info())
+        # 检查是否自动启动
+        self.check_auto_start()
 
-    def __init_db__(self):
-        self.db = MyDB()
+    def check_auto_start(self):
+        """
+        初始化主页面ui
+        """
+        s = self.config.auto_start
+        self.actionSetAutoOpen.setChecked(s)
 
     def __init_systemTray(self, app):
         """
@@ -294,7 +305,26 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         except Exception as e:
             QMessageBox.critical(self, "错误", str(e), QMessageBox.Yes)
 
-    def set_auto_open(self): ...
+    def set_auto_open(self, checked: bool):
+        """
+        设置开机自启动
+        """
+        import winreg
+
+        if checked:
+            self.config.auto_start = True
+            # 当前exe文件路径
+            key = winreg.OpenKey(
+                winreg.HKEY_CURRENT_USER, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", 0, winreg.KEY_SET_VALUE
+            )
+            winreg.SetValueEx(key, "Account Manager", 0, winreg.REG_SZ, self.file_path + " --no-window")
+            winreg.CloseKey(key)
+        else:
+            self.config.auto_start = False
+            key = winreg.OpenKey(
+                winreg.HKEY_CURRENT_USER, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", 0, winreg.KEY_SET_VALUE
+            )
+            winreg.DeleteValue(key, "Account Manager")
 
     def register_right_click(self): ...
 

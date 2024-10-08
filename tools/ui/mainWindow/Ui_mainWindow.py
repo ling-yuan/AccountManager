@@ -131,6 +131,8 @@ class Ui_MainWindow(object):
         self.actiontest = QtWidgets.QAction(MainWindow)
         self.actiontest.setObjectName("actiontest")
         self.actionSetAutoOpen = QtWidgets.QAction(MainWindow)
+        self.actionSetAutoOpen.setCheckable(True)
+        self.actionSetAutoOpen.setChecked(False)
         self.actionSetAutoOpen.setObjectName("actionSetAutoOpen")
         self.actionRegister = QtWidgets.QAction(MainWindow)
         self.actionRegister.setObjectName("actionRegister")

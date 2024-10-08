@@ -380,6 +380,12 @@
    </property>
   </action>
   <action name="actionSetAutoOpen">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>开机自启动</string>
    </property>
