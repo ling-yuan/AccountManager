@@ -10,6 +10,7 @@ from PyQt5.QtWidgets import (
     QTableWidgetItem,
     QApplication,
     QProgressBar,
+    QSystemTrayIcon,
 )
 from tools.ui.mainWindow.Ui_mainWindow import Ui_MainWindow
 from tools.ui.systemTray.Ui_systemTray import SystemTrayIcon
@@ -96,6 +97,9 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         初始化系统托盘
         """
         self.tray = SystemTrayIcon(self)
+        # 系统托盘提示信息
+        # self.tray.showMessage('Notification', 'This is a notification', QSystemTrayIcon.Information, 5000)
+
 
     def _refresh_tableWidget(self, data: list = None):
         """

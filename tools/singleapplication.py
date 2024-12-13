@@ -9,7 +9,7 @@ class SingleApplication(QApplication):
         self.main_window = None
         self.local_server = None
         self.is_running = False
-        # 取应用程序名作为LocalServer的名字，也可以自己取一个str，不要和别的软件重复
+        # 取应用程序名作为LocalServer的名字，不与别的软件重复
         self.server_name = QFileInfo(QCoreApplication.applicationFilePath()).fileName()
         print(self.server_name)
         self.init_local_connection()
