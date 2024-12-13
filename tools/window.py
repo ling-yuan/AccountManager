@@ -34,13 +34,17 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         """
         绑定事件
         """
+        # menu1
         self.importtxt.triggered.connect(self.import_txt)
         self.importxls.triggered.connect(self.import_xls)
         self.exporttxt.triggered.connect(self.export_txt)
         self.exportxls.triggered.connect(self.export_xls)
+        # menu2
         self.actionSetAutoOpen.triggered.connect(self.set_auto_open)
         self.actionRegister.triggered.connect(self.register_right_click)
         self.actionExit.triggered.connect(self.exit_app)
+        # menu3
+        self.actionQRcode.triggered.connect(self.show_qr_code)
 
         self.pushButtonmodify.clicked.connect(self.modify)
         self.pushButtondelete.clicked.connect(self.delete)
@@ -58,6 +62,7 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         self.actionSetAutoOpen: QAction
         self.actionRegister: QAction
         self.actionExit: QAction
+        self.actionQRcode: QAction
         # Button
         self.pushButtonmodify: QPushButton
         self.pushButtondelete: QPushButton
@@ -99,7 +104,6 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         self.tray = SystemTrayIcon(self)
         # 系统托盘提示信息
         # self.tray.showMessage('Notification', 'This is a notification', QSystemTrayIcon.Information, 5000)
-
 
     def _refresh_tableWidget(self, data: list = None):
         """
@@ -334,6 +338,35 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
 
     def exit_app(self):
         self.app.quit()
+
+    def show_qr_code(self):
+        # 弹出消息框
+        import os
+        import zxing
+        import tempfile
+        from PIL import Image, ImageGrab
+
+        im = ImageGrab.grabclipboard()
+        if not isinstance(im, Image.Image):
+            QMessageBox.critical(self, "错误", "剪贴板中没有图片", QMessageBox.Yes)
+            return
+        im.save(tempfile.gettempdir() + "/temp.png")
+        barcode = zxing.BarCodeReader().decode(tempfile.gettempdir() + "/temp.png")
+        parse = barcode.parsed
+        os.remove(tempfile.gettempdir() + "/temp.png")
+        # 显示解析结果,选择复制或取消
+        msgbox = QMessageBox(self)
+        msgbox.setWindowTitle("解析结果")
+        msgbox.setText(parse)
+        msgbox.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        msgbox.setDefaultButton(QMessageBox.No)
+        # 获取按钮对象并设置文字
+        yes_button = msgbox.button(QMessageBox.Yes)
+        no_button = msgbox.button(QMessageBox.No)
+        yes_button.setText("复制")
+        no_button.setText("取消")
+        if msgbox.exec_() == QMessageBox.Yes:
+            self.app.clipboard().setText(parse)
 
     def modify(self):
         """
