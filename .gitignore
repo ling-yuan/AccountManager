@@ -168,3 +168,6 @@ info/key.key
 
 # temporary files
 tmp/*
+
+# data
+*.db

@@ -1,0 +1,1324 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SettingsForm</class>
+ <widget class="QWidget" name="SettingsForm">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>644</width>
+    <height>419</height>
+   </rect>
+  </property>
+  <property name="font">
+   <font>
+    <family>Maple Mono CN</family>
+    <pointsize>9</pointsize>
+    <weight>50</weight>
+    <bold>false</bold>
+   </font>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QWidget {background-color: #f8f9fa;color: #2c3e50;}QLabel {color: #34495e;font-weight: normal;background-color: transparent;padding: 2px;}QTabWidget {background-color: transparent;border: none;}QTabWidget::pane {background-color: #ffffff;border: 1px solid #bdc3c7;border-radius: 4px;top: -1px;}QTabWidget::tab-bar {alignment: left;}QTabBar::tab {background-color: #ecf0f1;color: #2c3e50;border: 1px solid #bdc3c7;border-bottom: none;border-top-left-radius: 4px;border-top-right-radius: 4px;padding: 6px 12px;margin-right: 2px;}QTabBar::tab:selected {background-color: #ffffff;border-bottom: 1px solid #ffffff;}QTabBar::tab:hover:!selected {background-color: #d5dbdb;}QCheckBox {color: #2c3e50;spacing: 6px;}QCheckBox::indicator {width: 16px;height: 16px;border: 1px solid #bdc3c7;border-radius: 3px;background-color: #ffffff;}QCheckBox::indicator:checked {background-color: #3498db;border-color: #2980b9;image: url(&quot;:/resource/resource/checked.svg&quot;);}QCheckBox::indicator:hover {border-color: #7fb3d3;}QComboBox {background-color: #ffffff;border: 1px solid #bdc3c7;border-radius: 4px;padding: 4px 8px;color: #2c3e50;min-height: 20px;}QComboBox:hover {border-color: #7fb3d3;}QComboBox:focus {border-color: #3498db;outline: none;}QComboBox::drop-down {subcontrol-origin: padding;subcontrol-position: top right;width: 20px;border-left: 1px solid #bdc3c7;border-top-right-radius: 4px;border-bottom-right-radius: 4px;background-color: #ecf0f1;}QComboBox::down-arrow {image: url(&quot;:/resource/resource/downarrow.svg&quot;);width: 12px;height: 12px;}QComboBox QAbstractItemView {background-color: #e6e6e6;border: 1px solid #b2e0ff;border-radius: 4px;color: #2c3e50;selection-background-color: #e8f4f8;selection-color: #192b3d;}QLineEdit {background-color: #ffffff;border: 1px solid #bdc3c7;border-radius: 4px;padding: 4px 8px;color: #2c3e50;selection-background-color: #3498db;}QLineEdit:focus {border-color: #3498db;outline: none;}QLineEdit:hover {border-color: #7fb3d3;}QSpinBox {background-color: #ffffff;border: 1px solid #bdc3c7;border-radius: 4px;padding: 4px 8px;color: #2c3e50;min-height: 20px;}QSpinBox:focus {border-color: #3498db;outline: none;}QSpinBox:hover {border-color: #7fb3d3;}QSpinBox::up-button {subcontrol-origin: border;subcontrol-position: top right;width: 16px;border-left: 1px solid #bdc3c7;border-top: 1px solid #bdc3c7;border-right: 1px solid #bdc3c7;border-top-right-radius: 4px;background-color: #ecf0f1;}QSpinBox::down-button {subcontrol-origin: border;subcontrol-position: bottom right;width: 16px;border-left: 1px solid #bdc3c7;border-bottom: 1px solid #bdc3c7;border-right: 1px solid #bdc3c7;border-bottom-right-radius: 4px;background-color: #ecf0f1;}QSpinBox::up-arrow {image: url(&quot;:/resource/resource/spinbox_up.svg&quot;);width: 8px;height: 8px;}QSpinBox::down-arrow {image: url(&quot;:/resource/resource/spinbox_down.svg&quot;);width: 8px;height: 8px;}QPushButton {background-color: #ecf0f1;border: 1px solid #bdc3c7;border-radius: 4px;padding: 6px 12px;color: #2c3e50;min-height: 20px;}QPushButton:hover {background-color: #d5dbdb;border-color: #95a5a6;}QPushButton:pressed {background-color: #bdc3c7;border-color: #7f8c8d;}QPushButton:focus {border-color: #3498db;outline: none;}QStackedWidget {background-color: #f0f0f0;border: 1px solid #cccccc;border-radius: 4px;}QScrollBar:vertical {background-color: #f8f9fa;border: none;width: 12px;border-radius: 6px;}QScrollBar::handle:vertical {background-color: #bdc3c7;border-radius: 6px;min-height: 20px;}QScrollBar::handle:vertical:hover {background-color: #95a5a6;}QScrollBar::add-line:vertical,QScrollBar::sub-line:vertical {height: 0px;}QScrollBar:horizontal {background-color: #f8f9fa;border: none;height: 12px;border-radius: 6px;}QScrollBar::handle:horizontal {background-color: #bdc3c7;border-radius: 6px;min-width: 20px;}QScrollBar::handle:horizontal:hover {background-color: #95a5a6;}QScrollBar::add-line:horizontal,QScrollBar::sub-line:horizontal {width: 0px;}</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="font">
+      <font>
+       <family>Maple Mono CN</family>
+      </font>
+     </property>
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="tab_nomal">
+      <property name="font">
+       <font>
+        <family>Maple Mono CN</family>
+       </font>
+      </property>
+      <attribute name="title">
+       <string>通用</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QCheckBox" name="checkBox_auto_start">
+         <property name="font">
+          <font>
+           <family>Maple Mono CN</family>
+          </font>
+         </property>
+         <property name="text">
+          <string>允许自启动</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="checkBox_use_systemtray">
+         <property name="font">
+          <font>
+           <family>Maple Mono CN</family>
+          </font>
+         </property>
+         <property name="text">
+          <string>关闭时缩小至任务栏</string>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+         <property name="tristate">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="checkBox_auto_update">
+         <property name="font">
+          <font>
+           <family>Maple Mono CN</family>
+          </font>
+         </property>
+         <property name="tabletTracking">
+          <bool>false</bool>
+         </property>
+         <property name="autoFillBackground">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>自动检查更新(暂未实现)</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_data">
+      <property name="font">
+       <font>
+        <family>Maple Mono CN</family>
+       </font>
+      </property>
+      <attribute name="title">
+       <string>数据</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QLabel" name="label_save_type">
+           <property name="font">
+            <font>
+             <family>Maple Mono CN</family>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>数据保存方式</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="comboBox_save_type">
+           <property name="font">
+            <font>
+             <family>Maple Mono CN</family>
+            </font>
+           </property>
+           <item>
+            <property name="text">
+             <string>txt</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>sqlite</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>mysql</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>mongodb</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QStackedWidget" name="stackedWidget">
+         <property name="font">
+          <font>
+           <family>Maple Mono CN</family>
+           <pointsize>10</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+           <kerning>true</kerning>
+          </font>
+         </property>
+         <property name="mouseTracking">
+          <bool>false</bool>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">.QStackedWidget {
+    background-color: #f0f0f0;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+}
+</string>
+         </property>
+         <property name="currentIndex">
+          <number>0</number>
+         </property>
+         <widget class="QWidget" name="page_txt">
+          <property name="font">
+           <font>
+            <family>Maple Mono CN</family>
+           </font>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_3">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>10</number>
+           </property>
+           <property name="topMargin">
+            <number>10</number>
+           </property>
+           <property name="rightMargin">
+            <number>10</number>
+           </property>
+           <property name="bottomMargin">
+            <number>10</number>
+           </property>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_21">
+             <item>
+              <widget class="QLabel" name="label_5">
+               <property name="font">
+                <font>
+                 <family>Maple Mono CN</family>
+                 <weight>50</weight>
+                 <bold>false</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>保存位置</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEdit_txt_save_path">
+               <property name="font">
+                <font>
+                 <family>Maple Mono CN</family>
+                </font>
+               </property>
+               <property name="inputMask">
+                <string/>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="placeholderText">
+                <string>./</string>
+               </property>
+               <property name="clearButtonEnabled">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButton_txt_select_path">
+               <property name="font">
+                <font>
+                 <family>Maple Mono CN</family>
+                </font>
+               </property>
+               <property name="text">
+                <string>浏览</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="page_sqlite">
+          <property name="font">
+           <font>
+            <family>Maple Mono CN</family>
+           </font>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_5" stretch="9,2">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>10</number>
+           </property>
+           <property name="topMargin">
+            <number>10</number>
+           </property>
+           <property name="rightMargin">
+            <number>10</number>
+           </property>
+           <property name="bottomMargin">
+            <number>10</number>
+           </property>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_3">
+             <item>
+              <widget class="QLabel" name="label_2">
+               <property name="font">
+                <font>
+                 <family>Maple Mono CN</family>
+                 <weight>50</weight>
+                 <bold>false</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>保存位置</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEdit_sqlite_save_path">
+               <property name="font">
+                <font>
+                 <family>Maple Mono CN</family>
+                </font>
+               </property>
+               <property name="placeholderText">
+                <string>./</string>
+               </property>
+               <property name="clearButtonEnabled">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButton_sqlite_select_path">
+               <property name="font">
+                <font>
+                 <family>Maple Mono CN</family>
+                </font>
+               </property>
+               <property name="text">
+                <string>浏览</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_9">
+             <property name="spacing">
+              <number>0</number>
+             </property>
+             <item>
+              <spacer name="horizontalSpacer_3">
+               <property name="font">
+                <font>
+                 <family>Microsoft YaHei</family>
+                </font>
+               </property>
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButton_sqlite_test_connect">
+               <property name="font">
+                <font>
+                 <family>Maple Mono CN</family>
+                </font>
+               </property>
+               <property name="text">
+                <string>测试连接</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="page_mysql">
+          <property name="font">
+           <font>
+            <family>Maple Mono CN</family>
+           </font>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_6" stretch="3,3,3,2">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>10</number>
+           </property>
+           <property name="topMargin">
+            <number>10</number>
+           </property>
+           <property name="rightMargin">
+            <number>10</number>
+           </property>
+           <property name="bottomMargin">
+            <number>10</number>
+           </property>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="5,12,1,4">
+             <property name="spacing">
+              <number>0</number>
+             </property>
+             <property name="sizeConstraint">
+              <enum>QLayout::SetDefaultConstraint</enum>
+             </property>
+             <item>
+              <widget class="QLabel" name="label_mysql_host">
+               <property name="font">
+                <font>
+                 <family>Maple Mono CN</family>
+                 <weight>50</weight>
+                 <bold>false</bold>
+                 <kerning>true</kerning>
+                </font>
+               </property>
+               <property name="text">
+                <string>主机</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEdit_mysql_host">
+               <property name="font">
+                <font>
+                 <family>Maple Mono CN</family>
+                </font>
+               </property>
+               <property name="placeholderText">
+                <string>127.0.0.1</string>
+               </property>
+               <property name="clearButtonEnabled">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_mysql_port">
+               <property name="font">
+                <font>
+                 <family>Maple Mono CN</family>
+                 <weight>50</weight>
+                 <bold>false</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>:</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="spinBox_mysql_port">
+               <property name="font">
+                <font>
+                 <family>Maple Mono CN</family>
+                </font>
+               </property>
+               <property name="maximum">
+                <number>65535</number>
+               </property>
+               <property name="value">
+                <number>3306</number>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="2,7">
+             <property name="spacing">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QLabel" name="label_mysql_user">
+               <property name="font">
+                <font>
+                 <family>Maple Mono CN</family>
+                 <weight>50</weight>
+                 <bold>false</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>用户名</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEdit_mysql_username">
+               <property name="font">
+                <font>
+                 <family>Maple Mono CN</family>
+                </font>
+               </property>
+               <property name="placeholderText">
+                <string>root</string>
+               </property>
+               <property name="clearButtonEnabled">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="2,7">
+             <property name="spacing">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QLabel" name="label_mysql_password">
+               <property name="font">
+                <font>
+                 <family>Maple Mono CN</family>
+                 <weight>50</weight>
+                 <bold>false</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>密码</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEdit_mysql_password">
+               <property name="font">
+                <font>
+                 <family>Maple Mono CN</family>
+                </font>
+               </property>
+               <property name="echoMode">
+                <enum>QLineEdit::Password</enum>
+               </property>
+               <property name="placeholderText">
+                <string/>
+               </property>
+               <property name="clearButtonEnabled">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_8">
+             <property name="spacing">
+              <number>0</number>
+             </property>
+             <item>
+              <spacer name="horizontalSpacer_2">
+               <property name="font">
+                <font>
+                 <family>Microsoft YaHei</family>
+                </font>
+               </property>
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButton_mysql_test_connect">
+               <property name="font">
+                <font>
+                 <family>Maple Mono CN</family>
+                </font>
+               </property>
+               <property name="text">
+                <string>测试连接</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="page_mongodb">
+          <property name="font">
+           <font>
+            <family>Maple Mono CN</family>
+           </font>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_7" stretch="3,3,3,2">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>10</number>
+           </property>
+           <property name="topMargin">
+            <number>10</number>
+           </property>
+           <property name="rightMargin">
+            <number>10</number>
+           </property>
+           <property name="bottomMargin">
+            <number>10</number>
+           </property>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_12" stretch="5,12,1,4">
+             <property name="spacing">
+              <number>0</number>
+             </property>
+             <property name="sizeConstraint">
+              <enum>QLayout::SetDefaultConstraint</enum>
+             </property>
+             <item>
+              <widget class="QLabel" name="label_mongodb_host">
+               <property name="font">
+                <font>
+                 <family>Maple Mono CN</family>
+                 <weight>50</weight>
+                 <bold>false</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>主机</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEdit_mongodb_host">
+               <property name="font">
+                <font>
+                 <family>Maple Mono CN</family>
+                </font>
+               </property>
+               <property name="placeholderText">
+                <string>127.0.0.1</string>
+               </property>
+               <property name="clearButtonEnabled">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_mongodb_port">
+               <property name="font">
+                <font>
+                 <family>Maple Mono CN</family>
+                 <weight>50</weight>
+                 <bold>false</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>:</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="spinBox_mongodb_port">
+               <property name="font">
+                <font>
+                 <family>Maple Mono CN</family>
+                 <pointsize>9</pointsize>
+                 <weight>50</weight>
+                 <bold>false</bold>
+                </font>
+               </property>
+               <property name="readOnly">
+                <bool>false</bool>
+               </property>
+               <property name="buttonSymbols">
+                <enum>QAbstractSpinBox::UpDownArrows</enum>
+               </property>
+               <property name="specialValueText">
+                <string/>
+               </property>
+               <property name="accelerated">
+                <bool>false</bool>
+               </property>
+               <property name="minimum">
+                <number>0</number>
+               </property>
+               <property name="maximum">
+                <number>65535</number>
+               </property>
+               <property name="value">
+                <number>27017</number>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_13" stretch="2,7">
+             <property name="spacing">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QLabel" name="label_mongodb_user">
+               <property name="font">
+                <font>
+                 <family>Maple Mono CN</family>
+                 <weight>50</weight>
+                 <bold>false</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>用户名</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEdit_mongodb_username">
+               <property name="font">
+                <font>
+                 <family>Maple Mono CN</family>
+                </font>
+               </property>
+               <property name="placeholderText">
+                <string>root</string>
+               </property>
+               <property name="clearButtonEnabled">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="2,7">
+             <property name="spacing">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QLabel" name="label_mongodb_password">
+               <property name="font">
+                <font>
+                 <family>Maple Mono CN</family>
+                 <weight>50</weight>
+                 <bold>false</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>密码</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEdit_mongodb_password">
+               <property name="font">
+                <font>
+                 <family>Maple Mono CN</family>
+                </font>
+               </property>
+               <property name="echoMode">
+                <enum>QLineEdit::Password</enum>
+               </property>
+               <property name="placeholderText">
+                <string/>
+               </property>
+               <property name="clearButtonEnabled">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_10">
+             <property name="spacing">
+              <number>0</number>
+             </property>
+             <item>
+              <spacer name="horizontalSpacer_4">
+               <property name="font">
+                <font>
+                 <family>Microsoft YaHei</family>
+                </font>
+               </property>
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButton_mongodb_test_connect">
+               <property name="font">
+                <font>
+                 <family>Maple Mono CN</family>
+                </font>
+               </property>
+               <property name="text">
+                <string>测试连接</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_backup">
+      <property name="font">
+       <font>
+        <family>Maple Mono CN</family>
+       </font>
+      </property>
+      <attribute name="title">
+       <string>备份</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_9" stretch="2,4,1">
+       <property name="spacing">
+        <number>5</number>
+       </property>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="3,3,3,20,1,4,1,4">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <property name="sizeConstraint">
+          <enum>QLayout::SetMinAndMaxSize</enum>
+         </property>
+         <item>
+          <widget class="QLabel" name="label_address">
+           <property name="font">
+            <font>
+             <family>Maple Mono CN</family>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>地址</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_5">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_https">
+           <property name="font">
+            <font>
+             <family>Maple Mono CN</family>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>https://</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="lineEdit_webdav_host">
+           <property name="font">
+            <font>
+             <family>Maple Mono CN</family>
+            </font>
+           </property>
+           <property name="placeholderText">
+            <string>host.example.com</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_maohao">
+           <property name="font">
+            <font>
+             <family>Maple Mono CN</family>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="lineEdit_webdav_port">
+           <property name="font">
+            <font>
+             <family>Maple Mono CN</family>
+            </font>
+           </property>
+           <property name="inputMask">
+            <string/>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="placeholderText">
+            <string>443</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_xiegang">
+           <property name="font">
+            <font>
+             <family>Maple Mono CN</family>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>/</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="lineEdit_webdav_path">
+           <property name="font">
+            <font>
+             <family>Maple Mono CN</family>
+            </font>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="placeholderText">
+            <string>dav</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QGridLayout" name="gridLayout" rowstretch="1,1" columnstretch="0">
+         <item row="0" column="0">
+          <layout class="QHBoxLayout" name="horizontalLayout_18">
+           <property name="spacing">
+            <number>30</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="label_webdav_account">
+             <property name="font">
+              <font>
+               <family>Maple Mono CN</family>
+               <weight>50</weight>
+               <bold>false</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>账号</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="lineEdit_webdav_account">
+             <property name="font">
+              <font>
+               <family>Maple Mono CN</family>
+              </font>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="1" column="0">
+          <layout class="QHBoxLayout" name="horizontalLayout_19">
+           <property name="spacing">
+            <number>30</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="label_webdav_password">
+             <property name="font">
+              <font>
+               <family>Maple Mono CN</family>
+               <weight>50</weight>
+               <bold>false</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>密码</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="lineEdit_webdav_password">
+             <property name="font">
+              <font>
+               <family>Maple Mono CN</family>
+              </font>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_20">
+         <property name="spacing">
+          <number>10</number>
+         </property>
+         <item>
+          <spacer name="horizontalSpacer_6">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Expanding</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButton_webdav_test_connect">
+           <property name="font">
+            <font>
+             <family>Maple Mono CN</family>
+            </font>
+           </property>
+           <property name="text">
+            <string>测试连接</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButton_webdav_backup">
+           <property name="font">
+            <font>
+             <family>Maple Mono CN</family>
+            </font>
+           </property>
+           <property name="text">
+            <string>立即备份</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButton_webdav_restore">
+           <property name="font">
+            <font>
+             <family>Maple Mono CN</family>
+            </font>
+           </property>
+           <property name="text">
+            <string>恢复数据</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_about">
+      <property name="font">
+       <font>
+        <family>Maple Mono CN</family>
+       </font>
+      </property>
+      <attribute name="title">
+       <string>关于</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_8">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_16" stretch="5,8">
+         <property name="spacing">
+          <number>5</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="label_n">
+           <property name="font">
+            <font>
+             <family>Maple Mono CN</family>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>名称</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_name">
+           <property name="font">
+            <font>
+             <family>Maple Mono CN</family>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Account Manager</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_14" stretch="5,8">
+         <property name="spacing">
+          <number>5</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="label_v">
+           <property name="font">
+            <font>
+             <family>Maple Mono CN</family>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>版本</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_version">
+           <property name="font">
+            <font>
+             <family>Maple Mono CN</family>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Version</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_15" stretch="5,8">
+         <property name="spacing">
+          <number>5</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="label_q">
+           <property name="font">
+            <font>
+             <family>Maple Mono CN</family>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>联系QQ</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_qq">
+           <property name="font">
+            <font>
+             <family>Maple Mono CN</family>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>572268633</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_17" stretch="5,8">
+         <property name="spacing">
+          <number>5</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="label_s">
+           <property name="font">
+            <font>
+             <family>Maple Mono CN</family>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>GitHub仓库</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_store">
+           <property name="font">
+            <font>
+             <family>Maple Mono CN</family>
+             <pointsize>7</pointsize>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>https://github.com/ling-yuan/AccountManager</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="font">
+        <font>
+         <family>Maple Mono CN</family>
+        </font>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_save">
+       <property name="font">
+        <font>
+         <family>Maple Mono CN</family>
+        </font>
+       </property>
+       <property name="text">
+        <string>保存</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="Image.qrc"/>
+ </resources>
+ <connections/>
+</ui>

@@ -4,24 +4,27 @@ from PyQt5.QtWidgets import (
     QMenu,
 )
 
+from . import Image_rc
+
 
 class SystemTrayIcon(QSystemTrayIcon):
+
     def __init__(self, MainWindow, parent=None):
         super(SystemTrayIcon, self).__init__(parent)
         self.mainWindow = MainWindow
         self.__init_gui__()
-        self._bound()
+        self.__init_slot__()
         self.show()
 
     def __init_gui__(self):
-        self.setIcon(QIcon("./img/safe.png"))
+        self.setIcon(QIcon(":/resource/resource/safe.png"))
         self.setToolTip("密码管理器")
         self.trayMenu = QMenu()
         self.trayMenu.addAction("显示", self.mainWindow.show)
         self.trayMenu.addAction("退出", self.mainWindow.app.quit)
         self.setContextMenu(self.trayMenu)
 
-    def _bound(self):
+    def __init_slot__(self):
         # 绑定双击事件
         self.activated.connect(self.click_event)
 

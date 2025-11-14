@@ -1,0 +1,17 @@
+<RCC>
+  <qresource prefix="resource">
+    <file>../resource/checked.svg</file>
+    <file>../resource/downarrow.svg</file>
+    <file>../resource/export.png</file>
+    <file>../resource/icon.ico</file>
+    <file>../resource/icon.png</file>
+    <file>../resource/import.png</file>
+    <file>../resource/qrcode.png</file>
+    <file>../resource/safe.png</file>
+    <file>../resource/settings.png</file>
+    <file>../resource/spinbox_down.svg</file>
+    <file>../resource/spinbox_up.svg</file>
+    <file>../resource/txt.png</file>
+    <file>../resource/xls.png</file>
+  </qresource>
+</RCC>
