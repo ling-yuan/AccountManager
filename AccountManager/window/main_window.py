@@ -45,7 +45,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.use_system_tray(self.config.use_systemtray)
         # 表格设置
         header_font = QtGui.QFont()
-        header_font.setFamily("Maple Mono CN")
+        # header_font.setFamily("Maple Mono CN")
         header_font.setPointSize(9)
         horizontal_header = self.tableWidget.horizontalHeader()
         horizontal_header.setFont(header_font)
@@ -102,9 +102,13 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             finally:
                 f.close()
                 for i in tmp_data:
-                    tmp_info.append(
-                        [t.strip().replace("\\n", "\n") for t in i.split("\t")]
-                    )
+                    # 避免使用嵌套列表推导式，改用普通循环
+                    parts = i.split("\t")
+                    cleaned_parts = []
+                    for t in parts:
+                        cleaned_part = t.strip().replace("\\n", "\n")
+                        cleaned_parts.append(cleaned_part)
+                    tmp_info.append(cleaned_parts)
             self.tools.store = Store()
             for info in tmp_info:
                 self.tools.insert_data(Data(*info))

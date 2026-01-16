@@ -1,3 +1,4 @@
+import os
 import sys
 from PyQt5.QtCore import QSettings
 
@@ -21,7 +22,18 @@ def singleton(cls):
 class Config:
     def __init__(self):
         self._settings = QSettings("BaiShi", "AccountManager")
-        self._folder_path = sys.argv[0].rsplit("\\", 1)[0]
+        # 获取当前文件夹路径
+        if getattr(sys, 'frozen', False):
+            # 如果是打包后的可执行文件
+            if hasattr(sys, '_MEIPASS'):
+                # PyInstaller的临时目录
+                self._folder_path = sys._MEIPASS
+            else:
+                # Nuitka的目录
+                self._folder_path = os.path.dirname(sys.executable)
+        else:
+            # 开发环境
+            self._folder_path = sys.argv[0].rsplit("\\", 1)[0]
         self._default_config = {
             "auto_start": False,
             "use_systemtray": True,

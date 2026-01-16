@@ -6,13 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>531</height>
+    <width>804</width>
+    <height>540</height>
    </rect>
   </property>
   <property name="font">
    <font>
-    <family>Maple Mono CN</family>
     <pointsize>9</pointsize>
     <weight>75</weight>
     <bold>true</bold>
@@ -29,12 +28,15 @@
     <normaloff>:/resource/resource/icon.ico</normaloff>:/resource/resource/icon.ico</iconset>
   </property>
   <property name="styleSheet">
-   <string notr="true">QMainWindow {background-color: #f8f9fa;color: #2c3e50;}QWidget {background-color: #f8f9fa;color: #2c3e50;}QLabel {color: #34495e;font-weight: normal;background-color: transparent;padding: 2px;}QLineEdit {background-color: #ffffff;border: 1px solid #bdc3c7;border-radius: 4px;padding: 4px 8px;color: #2c3e50;selection-background-color: #3498db;}QLineEdit:focus {border-color: #3498db;outline: none;}QLineEdit:hover {border-color: #7fb3d3;}QTextEdit {background-color: #ffffff;border: 1px solid #bdc3c7;border-radius: 4px;padding: 4px;color: #2c3e50;selection-background-color: #3498db;}QTextEdit:focus {border-color: #3498db;outline: none;}QPushButton {background-color: #ecf0f1;border: 1px solid #bdc3c7;border-radius: 4px;padding: 6px 12px;color: #2c3e50;min-height: 20px;}QPushButton:hover {background-color: #d5dbdb;border-color: #95a5a6;}QPushButton:pressed {background-color: #bdc3c7;border-color: #7f8c8d;}QPushButton:focus {border-color: #3498db;outline: none;}QTableWidget {background-color: #ffffff;border: 1px solid #bdc3c7;gridline-color: #ecf0f1;color: #2c3e50;outline: none;selection-background-color: #e8f4f8;}QTableWidget QTableCornerButton::section {background-color: #ecf0f1;border: none;border-bottom: 1px solid #bdc3c7;border-right: 1px solid #bdc3c7;}QTableWidget QHeaderView::section {background-color: #ecf0f1;color: #2c3e50;border: none;border-bottom: 1px solid #bdc3c7;border-right: 1px solid #bdc3c7;padding: 4px;font-weight: normal;}QTableWidget QHeaderView::section:vertical:last {border-bottom: none;}QTableWidget::item {padding: 4px;border: none;border-bottom: 1px solid #ecf0f1;border-right: 1px solid #ecf0f1;}QTableWidget::item:selected {background-color: #e8f4f8;color: #2c3e50;}QTableWidget::item:hover {background-color: #f1f8ff;}QHeaderView::section {background-color: #ecf0f1;color: #2c3e50;border: 1px solid #bdc3c7;padding: 4px;font-weight: normal;}QHeaderView::section:hover {background-color: #d5dbdb;}QMenuBar {background-color: #ecf0f1;color: #2c3e50;border-bottom: 1px solid #bdc3c7;}QMenuBar::item {padding: 4px 8px;background-color: transparent;}QMenuBar::item:selected {background-color: #d5dbdb;}QMenuBar::item:pressed {background-color: #bdc3c7;}QMenu {background-color: #ffffff;border: 1px solid #bdc3c7;border-radius: 4px;padding: 2px;color: #2c3e50;}QMenu::item {padding: 4px 16px;border-radius: 2px;}QMenu::item:selected {background-color: #e8f4f8;}QStatusBar {background-color: #ecf0f1;color: #2c3e50;border-top: 1px solid #bdc3c7;}QScrollBar:vertical {background-color: #f8f9fa;border: none;width: 8px;}QScrollBar::handle:vertical {background-color: #bdc3c7;min-height: 20px;}QScrollBar::handle:vertical:hover {background-color: #95a5a6;}QScrollBar::add-line:vertical,QScrollBar::sub-line:vertical {height: 0px;}QScrollBar:horizontal {background-color: #f8f9fa;border: none;height: 8px;}QScrollBar::handle:horizontal {background-color: #bdc3c7;min-width: 20px;}QScrollBar::handle:horizontal:hover {background-color: #95a5a6;}QScrollBar::add-line:horizontal,QScrollBar::sub-line:horizontal {width: 0px;}</string>
+   <string notr="true">QMainWindow {background-color: #f8f9fa;color: #2c3e50;}QWidget {background-color: #f8f9fa;color: #2c3e50;}QLabel {color: #34495e;font-weight: normal;background-color: transparent;padding: 2px;}QLineEdit {background-color: #ffffff;border: 1px solid #bdc3c7;border-radius: 4px;padding: 4px 8px;color: #2c3e50;selection-background-color: #3498db;}QLineEdit:focus {border-color: #3498db;outline: none;}QLineEdit:hover {border-color: #7fb3d3;}QTextEdit {background-color: #ffffff;border: 1px solid #bdc3c7;border-radius: 4px;padding: 4px;color: #2c3e50;selection-background-color: #3498db;}QTextEdit:focus {border-color: #3498db;outline: none;}QPushButton {background-color: #ecf0f1;border: 1px solid #bdc3c7;border-radius: 4px;padding: 6px 12px;color: #2c3e50;min-height: 20px;}QPushButton:hover {background-color: #d5dbdb;border-color: #95a5a6;}QPushButton:pressed {background-color: #bdc3c7;border-color: #7f8c8d;}QPushButton:focus {border-color: #3498db;outline: none;}QTableWidget {background-color: #ffffff;border: 1px solid #bdc3c7;gridline-color: #ecf0f1;color: #2c3e50;outline: none;selection-background-color: #e8f4f8;}QTableWidget QTableCornerButton::section {background-color: #ecf0f1;border: none;border-bottom: 1px solid #bdc3c7;border-right: 1px solid #bdc3c7;}QTableWidget QHeaderView::section {background-color: #ecf0f1;color: #2c3e50;border: none;border-bottom: 1px solid #bdc3c7;border-right: 1px solid #bdc3c7;padding: 4px;font-weight: normal;}QTableWidget QHeaderView::section:vertical:last {border-bottom: none;}QTableWidget::item {padding: 4px;border: none;border-bottom: 1px solid #ecf0f1;border-right: 1px solid #ecf0f1;}QTableWidget::item:selected {background-color: #e8f4f8;color: #2c3e50;}QTableWidget::item:hover {background-color: #f1f8ff;}QHeaderView::section {background-color: #ecf0f1;color: #2c3e50;border: 1px solid #bdc3c7;padding: 4px;font-weight: normal;}QHeaderView::section:hover {background-color: #d5dbdb;}QMenuBar {background-color: #ecf0f1;color: #2c3e50;border-bottom: 1px solid #bdc3c7;}QMenuBar::item {padding: 4px 8px;background-color: transparent;}QMenuBar::item:selected {background-color: #d5dbdb;}QMenuBar::item:pressed {background-color: #bdc3c7;}QMenu {background-color: #ffffff;border: 1px solid #bdc3c7;border-radius: 4px;padding: 2px;color: #2c3e50;}QMenu::item {padding: 4px 16px;border-radius: 2px;}QMenu::item:selected {background-color: #e8f4f8;}QStatusBar {background-color: #ecf0f1;color: #2c3e50;border-top: 1px solid #bdc3c7;}QScrollBar:vertical {background-color: #f8f9fa;border: none;width: 8px;}QScrollBar::handle:vertical {background-color: #bdc3c7;min-height: 20px;}QScrollBar::handle:vertical:hover {background-color: #95a5a6;}QScrollBar::add-line:vertical,QScrollBar::sub-line:vertical {height: 0px;}QScrollBar:horizontal {background-color: #f8f9fa;border: none;height: 8px;}QScrollBar::handle:horizontal {background-color: #bdc3c7;min-width: 20px;}QScrollBar::handle:horizontal:hover {background-color: #95a5a6;}QScrollBar::add-line:horizontal,QScrollBar::sub-line:horizontal {width: 0px;}
+QMainWindow,
+QMainWindow * {
+	font-family: &quot;Maple Mono CN&quot;;
+}</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <property name="font">
     <font>
-     <family>Maple Mono CN</family>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -46,7 +48,6 @@
        <widget class="QLineEdit" name="lineEdit_name">
         <property name="font">
          <font>
-          <family>Maple Mono CN</family>
           <pointsize>10</pointsize>
           <weight>50</weight>
           <bold>false</bold>
@@ -70,7 +71,6 @@
        <widget class="QLabel" name="label_password">
         <property name="font">
          <font>
-          <family>Maple Mono CN</family>
           <pointsize>10</pointsize>
           <weight>50</weight>
           <bold>false</bold>
@@ -91,7 +91,6 @@
        <widget class="QLineEdit" name="lineEdit_password">
         <property name="font">
          <font>
-          <family>Maple Mono CN</family>
           <pointsize>10</pointsize>
           <weight>50</weight>
           <bold>false</bold>
@@ -109,7 +108,6 @@
        <widget class="QLabel" name="label_name">
         <property name="font">
          <font>
-          <family>Maple Mono CN</family>
           <pointsize>10</pointsize>
           <weight>50</weight>
           <bold>false</bold>
@@ -136,7 +134,6 @@
        <widget class="QLabel" name="label_account">
         <property name="font">
          <font>
-          <family>Maple Mono CN</family>
           <pointsize>10</pointsize>
           <weight>50</weight>
           <bold>false</bold>
@@ -157,7 +154,6 @@
        <widget class="QLineEdit" name="lineEdit_account">
         <property name="font">
          <font>
-          <family>Maple Mono CN</family>
           <pointsize>10</pointsize>
           <weight>50</weight>
           <bold>false</bold>
@@ -175,7 +171,6 @@
        <widget class="QLabel" name="label_remarks">
         <property name="font">
          <font>
-          <family>Maple Mono CN</family>
           <pointsize>10</pointsize>
           <weight>50</weight>
           <bold>false</bold>
@@ -196,7 +191,6 @@
        <widget class="QTextEdit" name="textEdit_note">
         <property name="font">
          <font>
-          <family>Maple Mono CN</family>
           <pointsize>10</pointsize>
           <weight>50</weight>
           <bold>false</bold>
@@ -213,7 +207,6 @@
          <widget class="QPushButton" name="pushButton_modify">
           <property name="font">
            <font>
-            <family>Maple Mono CN</family>
             <pointsize>10</pointsize>
             <weight>50</weight>
             <bold>false</bold>
@@ -231,7 +224,6 @@
          <widget class="QPushButton" name="pushButton_delete">
           <property name="font">
            <font>
-            <family>Maple Mono CN</family>
             <pointsize>10</pointsize>
             <weight>50</weight>
             <bold>false</bold>
@@ -249,7 +241,6 @@
          <widget class="QPushButton" name="pushButton_clear">
           <property name="font">
            <font>
-            <family>Maple Mono CN</family>
             <pointsize>10</pointsize>
             <weight>50</weight>
             <bold>false</bold>
@@ -267,7 +258,6 @@
          <widget class="QPushButton" name="pushButton_query">
           <property name="font">
            <font>
-            <family>Maple Mono CN</family>
             <pointsize>10</pointsize>
             <weight>50</weight>
             <bold>false</bold>
@@ -289,7 +279,6 @@
      <widget class="QTableWidget" name="tableWidget">
       <property name="font">
        <font>
-        <family>Maple Mono CN</family>
         <pointsize>10</pointsize>
         <weight>50</weight>
         <italic>false</italic>
@@ -360,7 +349,6 @@
        </property>
        <property name="font">
         <font>
-         <family>Maple Mono CN</family>
          <weight>50</weight>
          <bold>false</bold>
         </font>
@@ -372,7 +360,6 @@
        </property>
        <property name="font">
         <font>
-         <family>Maple Mono CN</family>
         </font>
        </property>
       </column>
@@ -382,7 +369,6 @@
        </property>
        <property name="font">
         <font>
-         <family>Maple Mono CN</family>
          <weight>50</weight>
          <bold>false</bold>
         </font>
@@ -394,14 +380,12 @@
        </property>
        <property name="font">
         <font>
-         <family>Maple Mono CN</family>
         </font>
        </property>
       </column>
       <item row="0" column="0">
        <property name="font">
         <font>
-         <family>Maple Mono CN</family>
          <weight>50</weight>
          <bold>false</bold>
         </font>
@@ -410,7 +394,6 @@
       <item row="0" column="1">
        <property name="font">
         <font>
-         <family>Maple Mono CN</family>
          <weight>50</weight>
          <bold>false</bold>
         </font>
@@ -419,7 +402,6 @@
       <item row="0" column="2">
        <property name="font">
         <font>
-         <family>Maple Mono CN</family>
          <weight>50</weight>
          <bold>false</bold>
         </font>
@@ -428,7 +410,6 @@
       <item row="0" column="3">
        <property name="font">
         <font>
-         <family>Maple Mono CN</family>
          <weight>50</weight>
          <bold>false</bold>
         </font>
@@ -443,13 +424,12 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
-     <height>28</height>
+     <width>804</width>
+     <height>25</height>
     </rect>
    </property>
    <property name="font">
     <font>
-     <family>Maple Mono CN</family>
      <weight>50</weight>
      <bold>false</bold>
     </font>
@@ -457,7 +437,6 @@
    <widget class="QMenu" name="menu_file">
     <property name="font">
      <font>
-      <family>Maple Mono CN</family>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -471,7 +450,6 @@
      </property>
      <property name="font">
       <font>
-       <family>Maple Mono CN</family>
        <weight>50</weight>
        <bold>false</bold>
       </font>
@@ -488,7 +466,6 @@
     <widget class="QMenu" name="menu_export">
      <property name="font">
       <font>
-       <family>Maple Mono CN</family>
        <weight>50</weight>
        <bold>false</bold>
       </font>
@@ -508,7 +485,6 @@
    <widget class="QMenu" name="menu_tools">
     <property name="font">
      <font>
-      <family>Maple Mono CN</family>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -520,7 +496,6 @@
    <widget class="QMenu" name="menu_settings">
     <property name="font">
      <font>
-      <family>Maple Mono CN</family>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -537,7 +512,6 @@
   <widget class="QStatusBar" name="statusbar">
    <property name="font">
     <font>
-     <family>Maple Mono CN</family>
      <weight>50</weight>
      <bold>false</bold>
     </font>
@@ -553,7 +527,6 @@
    </property>
    <property name="font">
     <font>
-     <family>Maple Mono CN</family>
     </font>
    </property>
   </action>
@@ -567,7 +540,6 @@
    </property>
    <property name="font">
     <font>
-     <family>Maple Mono CN</family>
     </font>
    </property>
   </action>
@@ -581,7 +553,6 @@
    </property>
    <property name="font">
     <font>
-     <family>Maple Mono CN</family>
     </font>
    </property>
   </action>

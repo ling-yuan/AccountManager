@@ -60,6 +60,10 @@ class SettingsWindow(Ui_SettingsForm, QDialog):
         self.label_version.setText(f"{self.config.version}")
         # 根据comboBox_save_type的值，修改stackedWidget的显示
         self.stackedWidget.setCurrentIndex(self.comboBox_save_type.currentIndex())
+        # 隐藏关闭按钮旁边的帮助按钮
+        self.setWindowFlags(
+            self.windowFlags() & ~Qt.WindowType.WindowContextHelpButtonHint
+        )
 
     def __disable_ui_for_thread__(self):
         """
@@ -77,15 +81,21 @@ class SettingsWindow(Ui_SettingsForm, QDialog):
             self.running_threads = 0
             self.pushButton_save.setEnabled(True)
 
-    def closeEvent(self, event):
+    def closeEvent(self, event: QtGui.QCloseEvent):
         """
         重写关闭事件，防止线程运行时关闭窗口
         """
-        if self.running_threads > 0:
-            QtWidgets.QMessageBox.warning(self, "警告", "线程运行中，请稍候...")
-            event.ignore()
-        else:
+        try:
+            if self.running_threads > 0:
+                QtWidgets.QMessageBox.warning(self, "警告", "线程运行中，请稍候...")
+                event.ignore()
+            self.on_click_save()
             event.accept()
+        except Exception as e:
+            QtWidgets.QMessageBox.critical(
+                self, "错误", f"保存配置失败：{str(e)}\n请检查配置后再关闭"
+            )
+            event.ignore()
 
     def __init_slot__(self):
         """

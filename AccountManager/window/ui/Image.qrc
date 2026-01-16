@@ -14,4 +14,7 @@
     <file>../resource/txt.png</file>
     <file>../resource/xls.png</file>
   </qresource>
+  <qresource prefix="font">
+    <file>../resource/MapleMono-CN-Light.ttf</file>
+  </qresource>
 </RCC>
