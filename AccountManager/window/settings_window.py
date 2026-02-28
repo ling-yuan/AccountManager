@@ -50,6 +50,7 @@ class SettingsWindow(Ui_SettingsForm, QDialog):
         self.lineEdit_mongodb_username.setText(self.config.mongodb_username)
         self.lineEdit_mongodb_password.setText(self.config.mongodb_password)
         # 备份设置
+        self.comboBox_protocol.setCurrentText(self.config.webdav_protocol)
         self.lineEdit_webdav_host.setText(self.config.webdav_host)
         self.lineEdit_webdav_port.setText(self.config.webdav_port)
         self.lineEdit_webdav_path.setText(self.config.webdav_path)
@@ -195,6 +196,7 @@ class SettingsWindow(Ui_SettingsForm, QDialog):
         self.thread = CustomThread(
             WebDAVTools.test_connection,
             "WebDAV",
+            self.comboBox_protocol.currentText(),
             self.lineEdit_webdav_host.text(),
             self.lineEdit_webdav_port.text(),
             self.lineEdit_webdav_path.text(),
@@ -210,6 +212,7 @@ class SettingsWindow(Ui_SettingsForm, QDialog):
         执行WebDAV备份
         """
         # 先保存WebDAV配置
+        self.config.webdav_protocol = self.comboBox_protocol.currentText()
         self.config.webdav_host = self.lineEdit_webdav_host.text()
         self.config.webdav_port = self.lineEdit_webdav_port.text()
         self.config.webdav_path = self.lineEdit_webdav_path.text()
@@ -257,6 +260,7 @@ class SettingsWindow(Ui_SettingsForm, QDialog):
             return
 
         # 先保存WebDAV配置
+        self.config.webdav_protocol = self.comboBox_protocol.currentText()
         self.config.webdav_host = self.lineEdit_webdav_host.text()
         self.config.webdav_port = self.lineEdit_webdav_port.text()
         self.config.webdav_path = self.lineEdit_webdav_path.text()
@@ -339,6 +343,7 @@ class SettingsWindow(Ui_SettingsForm, QDialog):
             return
 
         # 备份设置 - 始终保存WebDAV配置
+        self.config.webdav_protocol = self.comboBox_protocol.currentText()
         self.config.webdav_host = self.lineEdit_webdav_host.text()
         self.config.webdav_port = self.lineEdit_webdav_port.text()
         self.config.webdav_path = self.lineEdit_webdav_path.text()

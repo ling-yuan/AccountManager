@@ -871,20 +871,22 @@
           </spacer>
          </item>
          <item>
-          <widget class="QLabel" name="label_https">
+          <widget class="QComboBox" name="comboBox_protocol">
            <property name="font">
             <font>
              <family>Maple Mono CN</family>
-             <weight>50</weight>
-             <bold>false</bold>
             </font>
            </property>
-           <property name="text">
-            <string>https://</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
+           <item>
+            <property name="text">
+             <string>http</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>https</string>
+            </property>
+           </item>
           </widget>
          </item>
          <item>

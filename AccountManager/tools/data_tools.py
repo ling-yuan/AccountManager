@@ -431,7 +431,6 @@ def create_webdav_client_with_proxy(options: dict):
                 ctx.check_hostname = False
                 ctx.verify_mode = ssl.CERT_NONE
                 proxy_kwargs["ssl_context"] = ctx
-                proxy_kwargs["assert_hostname"] = False
                 return super().proxy_manager_for(proxy, **proxy_kwargs)
 
         # 挂载适配器到所有协议
@@ -546,6 +545,7 @@ class WebDAVTools:
     config = Config()
 
     def __init__(self):
+        self.protocol = self.config.webdav_protocol
         self.host = self.config.webdav_host
         self.port = self.config.webdav_port
         self.path = self.config.webdav_path
@@ -555,6 +555,7 @@ class WebDAVTools:
     @classmethod
     def test_connection(
         cls,
+        protocol: str,
         host: str,
         port: str,
         path: str,
@@ -564,7 +565,7 @@ class WebDAVTools:
         """测试WebDAV连接"""
         try:
             # 构建WebDAV URL
-            url = f"https://{host}:{port}/{path}"
+            url = f"{protocol}://{host}:{port}/{path}"
 
             options = {
                 "webdav_hostname": url,
@@ -608,7 +609,7 @@ class WebDAVTools:
         """
         try:
             # 构建WebDAV URL
-            url = f"https://{self.host}:{self.port}/{self.path}"
+            url = f"{self.protocol}://{self.host}:{self.port}/{self.path}"
 
             options = {
                 "webdav_hostname": url,
@@ -679,7 +680,7 @@ class WebDAVTools:
         """
         try:
             # 构建WebDAV URL
-            url = f"https://{self.host}:{self.port}/{self.path}"
+            url = f"{self.protocol}://{self.host}:{self.port}/{self.path}"
 
             options = {
                 "webdav_hostname": url,
@@ -697,15 +698,56 @@ class WebDAVTools:
             if not client.check(latest_backup):
                 print("未找到备份文件")
                 return False
-
-            # 下载到临时文件
+            # 下载到临时文件（使用二进制模式）
             with tempfile.NamedTemporaryFile(
-                mode="w", encoding="utf-8", delete=False, suffix=".json"
+                mode="wb", delete=False, suffix=".json"
             ) as tmp_file:
                 tmp_path = tmp_file.name
 
             try:
+                # monkey-patch download_file 以兼容不返回content-length的服务器
+                from webdav3.urn import Urn
+                from webdav3.exceptions import (
+                    OptionNotValid,
+                    RemoteResourceNotFound as _RRNF,
+                )
+
+                def _patched_download_file(
+                    remote_path, local_path, progress=None, progress_args=()
+                ):
+                    urn = Urn(remote_path)
+                    if client.is_dir(urn.path()):
+                        raise OptionNotValid(name="remote_path", value=remote_path)
+                    if os.path.isdir(local_path):
+                        raise OptionNotValid(name="local_path", value=local_path)
+                    if not client.check(urn.path()):
+                        raise _RRNF(urn.path())
+                    with open(local_path, "wb") as local_file:
+                        response = client.execute_request("download", urn.quote())
+                        # 兼容不返回content-length的服务器
+                        total = int(response.headers.get("content-length", 0))
+                        current = 0
+                        if callable(progress):
+                            progress(current, total, *progress_args)
+                        for block in response.iter_content(
+                            chunk_size=client.chunk_size
+                        ):
+                            local_file.write(block)
+                            current += len(block)
+                            if callable(progress):
+                                progress(current, total, *progress_args)
+
+                client.download_file = _patched_download_file
                 client.download_sync(remote_path=latest_backup, local_path=tmp_path)
+
+                # # 下载到临时文件
+                # with tempfile.NamedTemporaryFile(
+                #     mode="w", encoding="utf-8", delete=False, suffix=".json"
+                # ) as tmp_file:
+                #     tmp_path = tmp_file.name
+
+                # try:
+                #     client.download_sync(remote_path=latest_backup, local_path=tmp_path)
 
                 # 读取备份数据（加密数据）
                 with open(tmp_path, "r", encoding="utf-8") as f:
@@ -760,7 +802,7 @@ class WebDAVTools:
         :return: 备份文件列表
         """
         try:
-            url = f"https://{self.host}:{self.port}/{self.path}"
+            url = f"{self.protocol}://{self.host}:{self.port}/{self.path}"
 
             options = {
                 "webdav_hostname": url,

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'c:\Users\yanghr\Desktop\package\AccountManager\window\ui\SettingsWindow.ui'
+# Form implementation generated from reading ui file 'd:\Code\Project\python\AccountManager\AccountManager\window\ui\SettingsWindow.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.9
 #
@@ -451,15 +451,14 @@ class Ui_SettingsForm(object):
         self.horizontalLayout_4.addWidget(self.label_address)
         spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_4.addItem(spacerItem3)
-        self.label_https = QtWidgets.QLabel(self.tab_backup)
+        self.comboBox_protocol = QtWidgets.QComboBox(self.tab_backup)
         font = QtGui.QFont()
         font.setFamily("Maple Mono CN")
-        font.setBold(False)
-        font.setWeight(50)
-        self.label_https.setFont(font)
-        self.label_https.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
-        self.label_https.setObjectName("label_https")
-        self.horizontalLayout_4.addWidget(self.label_https)
+        self.comboBox_protocol.setFont(font)
+        self.comboBox_protocol.setObjectName("comboBox_protocol")
+        self.comboBox_protocol.addItem("")
+        self.comboBox_protocol.addItem("")
+        self.horizontalLayout_4.addWidget(self.comboBox_protocol)
         self.lineEdit_webdav_host = QtWidgets.QLineEdit(self.tab_backup)
         font = QtGui.QFont()
         font.setFamily("Maple Mono CN")
@@ -738,7 +737,8 @@ class Ui_SettingsForm(object):
         self.pushButton_mongodb_test_connect.setText(_translate("SettingsForm", "测试连接"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_data), _translate("SettingsForm", "数据"))
         self.label_address.setText(_translate("SettingsForm", "地址"))
-        self.label_https.setText(_translate("SettingsForm", "https://"))
+        self.comboBox_protocol.setItemText(0, _translate("SettingsForm", "http"))
+        self.comboBox_protocol.setItemText(1, _translate("SettingsForm", "https"))
         self.lineEdit_webdav_host.setPlaceholderText(_translate("SettingsForm", "host.example.com"))
         self.label_maohao.setText(_translate("SettingsForm", ":"))
         self.lineEdit_webdav_port.setPlaceholderText(_translate("SettingsForm", "443"))

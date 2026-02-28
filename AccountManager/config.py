@@ -23,9 +23,9 @@ class Config:
     def __init__(self):
         self._settings = QSettings("BaiShi", "AccountManager")
         # 获取当前文件夹路径
-        if getattr(sys, 'frozen', False):
+        if getattr(sys, "frozen", False):
             # 如果是打包后的可执行文件
-            if hasattr(sys, '_MEIPASS'):
+            if hasattr(sys, "_MEIPASS"):
                 # PyInstaller的临时目录
                 self._folder_path = sys._MEIPASS
             else:
@@ -54,6 +54,7 @@ class Config:
                 "password": "",
             },
             "webdav": {
+                "protocol": "https",
                 "host": "",
                 "port": "443",
                 "path": "dav",
@@ -61,7 +62,7 @@ class Config:
                 "password": "",
             },
             "about": {
-                "version": "2.0",
+                "version": "2.1",
             },
         }
 
@@ -214,6 +215,16 @@ class Config:
         return self._settings.value(
             "about/version", self._default_config["about"]["version"], type=str
         )
+
+    @property
+    def webdav_protocol(self) -> str:
+        return self._settings.value(
+            "webdav/protocol", self._default_config["webdav"]["protocol"], type=str
+        )
+
+    @webdav_protocol.setter
+    def webdav_protocol(self, value: str):
+        self._settings.setValue("webdav/protocol", value)
 
     @property
     def webdav_host(self) -> str:
