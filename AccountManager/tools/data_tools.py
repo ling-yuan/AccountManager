@@ -1,11 +1,10 @@
 import os
 import sqlite3
-import pymysql
-import pymongo
 import tempfile
 import json
 import hashlib
 import base64
+import uuid
 import winreg
 import urllib3
 import ssl
@@ -41,16 +40,10 @@ class BaseTools:
 
     @classmethod
     def get_tools(cls):
-        if cls.config.data_save_type == "txt":
-            return TxtTools()
-        elif cls.config.data_save_type == "sqlite":
+        if cls.config.data_save_type == "sqlite":
             return SqliteTools()
-        elif cls.config.data_save_type == "mysql":
-            return MysqlTools()
-        elif cls.config.data_save_type == "mongodb":
-            return MongodbTools()
         else:
-            return TxtTools()
+            return SqliteTools()
 
     @classmethod
     def test_connection(cls) -> bool:
@@ -165,14 +158,6 @@ class SqliteTools(BaseTools):
 
 # mysql工具
 class MysqlTools(BaseTools):
-
-    def __init__(self):
-        super().__init__()
-        self.host = self.config.mysql_host
-        self.username = self.config.mysql_username
-        self.password = self.config.mysql_password
-        self.port = self.config.mysql_port
-
     @classmethod
     def test_connection(
         cls,
@@ -181,84 +166,12 @@ class MysqlTools(BaseTools):
         password: str,
         port: int = 3306,
     ) -> bool:
-        try:
-            conn = pymysql.connect(
-                host=host,
-                user=username,
-                password=password,
-                port=port,
-            )
-            conn.close()
-            return True
-        except Exception:
-            return False
-
-    def get_connection(self):
-        conn = pymysql.connect(
-            host=self.host,
-            user=self.username,
-            password=self.password,
-            port=self.port,
-        )
-        cursor = conn.cursor()
-        cursor.execute("CREATE DATABASE IF NOT EXISTS account_manager;")
-        conn.select_db("account_manager")
-        return conn, cursor
-
-    def __init_database__(self):
-        conn, cursor = self.get_connection()
-        cursor.execute(
-            """
-            CREATE TABLE IF NOT EXISTS accounts (
-                id INT PRIMARY KEY AUTO_INCREMENT,
-                name VARCHAR(255),
-                account VARCHAR(255),
-                password VARCHAR(255),
-                note TEXT
-            );
-            """
-        )
-        conn.commit()
-        conn.close()
-
-    def _load_data(self):
-        self.__init_database__()
-        conn, cursor = self.get_connection()
-        cursor.execute("SELECT name, account, password, note FROM accounts")
-        rows = cursor.fetchall()
-        for row in rows:
-            self.store.add(Data(*row))
-        conn.close()
-
-    def _save_data(self):
-        self.__init_database__()
-        conn, cursor = self.get_connection()
-        cursor.execute("DELETE FROM accounts")
-        for i, data in enumerate(self.store):
-            cursor.execute(
-                "INSERT INTO accounts (id, name, account, password, note) VALUES (%s, %s, %s, %s, %s)",
-                [i + 1, *data.to_list()],
-            )
-        conn.commit()
-        conn.close()
-
-    def _clear_data(self):
-        conn, cursor = self.get_connection()
-        cursor.execute("DROP TABLE IF EXISTS accounts")
-        conn.commit()
-        conn.close()
+        # 项目已切换为本地 SQLite，保留占位实现避免旧调用报错
+        return False
 
 
 # mongodb工具
 class MongodbTools(BaseTools):
-
-    def __init__(self):
-        super().__init__()
-        self.host = self.config.mongodb_host
-        self.username = self.config.mongodb_username
-        self.password = self.config.mongodb_password
-        self.port = self.config.mongodb_port
-
     @classmethod
     def test_connection(
         cls,
@@ -267,67 +180,8 @@ class MongodbTools(BaseTools):
         password: str,
         port: int = 27017,
     ) -> bool:
-        try:
-            conn = pymongo.MongoClient(
-                host=host,
-                port=port,
-                username=username,
-                password=password,
-                serverSelectionTimeoutMS=3000,
-            )
-            conn.server_info()  # 强制连接
-            conn.close()
-            return True
-        except Exception:
-            return False
-
-    def get_connection(self):
-        conn = pymongo.MongoClient(
-            host=self.host,
-            port=self.port,
-            username=self.username,
-            password=self.password,
-            serverSelectionTimeoutMS=3000,
-        )
-        db = conn["account_manager"]
-        collection = db["accounts"]
-        return conn, db, collection
-
-    def _load_data(self):
-        conn, db, collection = self.get_connection()
-        # 查询所有name, account, password, note字段
-        rows = collection.find(
-            {}, {"_id": 0, "name": 1, "account": 1, "password": 1, "note": 1}
-        )
-        for item in rows:
-            self.store.add(
-                Data(
-                    item.get("name"),
-                    item.get("account"),
-                    item.get("password"),
-                    item.get("note"),
-                )
-            )
-        conn.close()
-
-    def _save_data(self):
-        conn, db, collection = self.get_connection()
-        collection.delete_many({})
-        for data in self.store:
-            collection.insert_one(
-                {
-                    "name": data.name,
-                    "account": data.account,
-                    "password": data.password,
-                    "note": data.note,
-                }
-            )
-        conn.close()
-
-    def _clear_data(self):
-        conn, db, collection = self.get_connection()
-        collection.drop()
-        conn.close()
+        # 项目已切换为本地 SQLite，保留占位实现避免旧调用报错
+        return False
 
 
 # 系统代理工具
@@ -552,6 +406,13 @@ class WebDAVTools:
         self.account = self.config.webdav_account
         self.password = self.config.webdav_password
 
+    def _build_tab_groups_payload(self, data_tools: "DataTool") -> dict:
+        payload = data_tools.load_tab_groups()
+        groups = payload.get("groups", []) if isinstance(payload, dict) else []
+        if isinstance(groups, list) and groups:
+            return payload
+        return data_tools.default_tab_groups_payload()
+
     @classmethod
     def test_connection(
         cls,
@@ -628,9 +489,11 @@ class WebDAVTools:
             # 生成备份文件名（包含时间戳）
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
+            tab_groups_payload = self._build_tab_groups_payload(data_tools)
+
             # 将数据转换为JSON格式
             backup_data = {
-                "data": [data.to_dict() for data in data_tools.store],
+                "tab_groups": tab_groups_payload,
                 "backup_time": datetime.now().isoformat(),
                 "version": self.config.version,
             }
@@ -767,24 +630,19 @@ class WebDAVTools:
                     # 解析JSON
                     backup_data = json.loads(backup_json)
                 else:
-                    # 如果不是加密数据，直接使用（向后兼容）
+                    # 若不是加密结构，按当前版本格式直接读取
                     backup_data = encrypted_data
 
-                # 清空当前数据
-                data_tools.store.clear()
-
-                # 恢复数据
-                for item in backup_data.get("data", []):
-                    data = Data(
-                        item.get("name", ""),
-                        item.get("account", ""),
-                        item.get("password", ""),
-                        item.get("note", ""),
-                    )
-                    data_tools.store.add(data)
-
-                # 保存到当前存储
-                data_tools.save_data()
+                tab_groups_payload = backup_data.get("tab_groups")
+                if (
+                    isinstance(tab_groups_payload, dict)
+                    and isinstance(tab_groups_payload.get("groups"), list)
+                    and len(tab_groups_payload.get("groups", [])) > 0
+                ):
+                    data_tools.save_tab_groups(tab_groups_payload)
+                else:
+                    print("备份文件缺少 tab_groups 数据，无法恢复")
+                    return False
 
                 return True
             finally:
@@ -837,47 +695,177 @@ class DataTool:
         self.__init_data__()
 
     def __init_data__(self):
-        self.tools = BaseTools.get_tools()
-        self.tools.load()
-        self.store = self.tools.data
-        # 注意：不要在这里调用save()，因为self.tools.store仍然是空的
-        # self.tools.save()
+        if self.config.data_save_type != "sqlite":
+            self.config.data_save_type = "sqlite"
+        self.store = self._store_from_tab_groups(self.load_tab_groups())
 
-    def insert_data(self, data: Data) -> bool:
-        result = self.store.add(data)
-        self.store.sort()
-        self.save_data()
-        return result
+    def default_tab_groups_payload(self) -> dict:
+        return {
+            "format": "account_manager_groups_v1",
+            "groups": [
+                {
+                    "key": str(uuid.uuid4()),
+                    "title": "分组1",
+                    "records": [],
+                }
+            ],
+        }
 
-    def delete_data(self, data: Data):
-        result = self.store.delete(data)
-        self.store.sort()
-        self.save_data()
-        return result
+    def _sqlite_db_path(self) -> str:
+        return os.path.join(self.config.sqlite_path, "data.db")
 
-    def modify_data(self, data: Data) -> bool:
-        result = self.store.modify(data)
-        self.store.sort()
-        self.save_data()
-        return result
+    def _sqlite_connect(self):
+        db_path = self._sqlite_db_path()
+        os.makedirs(os.path.dirname(db_path) or ".", exist_ok=True)
+        return sqlite3.connect(db_path)
 
-    def search(
-        self,
-        name: str | None = None,
-        account: str | None = None,
-        password: str | None = None,
-        note: str | None = None,
-    ) -> Store:
-        return self.store.search(Data(name, account, password, note))
+    @staticmethod
+    def _ensure_group_tables(cursor):
+        cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS tab_groups (
+                tab_key TEXT PRIMARY KEY,
+                title TEXT NOT NULL,
+                order_index INTEGER NOT NULL
+            )
+            """
+        )
+        cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS tab_group_records (
+                id TEXT PRIMARY KEY,
+                tab_key TEXT NOT NULL,
+                name TEXT,
+                account TEXT,
+                password TEXT,
+                note TEXT,
+                order_index INTEGER NOT NULL
+            )
+            """
+        )
 
-    def clean_data(self):
-        """
-        清空当前存储方式下的记录,但所有数据仍然保存在当前类中
-        """
-        self.tools = BaseTools.get_tools()
-        self.tools.clear()
+    @staticmethod
+    def _store_from_tab_groups(payload: dict) -> Store:
+        merged_store = Store()
+        groups = payload.get("groups", []) if isinstance(payload, dict) else []
+        for group in groups:
+            if not isinstance(group, dict):
+                continue
+            records = group.get("records", [])
+            if not isinstance(records, list):
+                continue
+            for item in records:
+                if not isinstance(item, dict):
+                    continue
+                merged_store.add(
+                    Data(
+                        name=item.get("name", ""),
+                        account=item.get("account", ""),
+                        password=item.get("password", ""),
+                        note=item.get("note", ""),
+                        id=item.get("id"),
+                    )
+                )
+        return merged_store.sort()
 
-    def save_data(self):
-        self.clean_data()
-        self.tools.store = deepcopy(self.store)
-        self.tools.save()
+    def load_tab_groups(self) -> dict:
+        db_path = self._sqlite_db_path()
+        if not os.path.exists(db_path):
+            self.store = Store()
+            return self.default_tab_groups_payload()
+
+        conn = self._sqlite_connect()
+        try:
+            cursor = conn.cursor()
+            self._ensure_group_tables(cursor)
+            cursor.execute(
+                "SELECT tab_key, title FROM tab_groups ORDER BY order_index ASC"
+            )
+            group_rows = cursor.fetchall()
+
+            if not group_rows:
+                payload = self.default_tab_groups_payload()
+                self.store = self._store_from_tab_groups(payload)
+                return payload
+
+            groups = []
+            for group_index, (tab_key, title) in enumerate(group_rows):
+                cursor.execute(
+                    """
+                    SELECT id, name, account, password, note
+                    FROM tab_group_records
+                    WHERE tab_key = ?
+                    ORDER BY order_index ASC
+                    """,
+                    (tab_key,),
+                )
+                records_rows = cursor.fetchall()
+                records = [
+                    {
+                        "id": row[0],
+                        "name": row[1] or "",
+                        "account": row[2] or "",
+                        "password": row[3] or "",
+                        "note": row[4] or "",
+                    }
+                    for row in records_rows
+                ]
+                groups.append(
+                    {
+                        "key": tab_key or str(uuid.uuid4()),
+                        "title": title or f"分组{group_index + 1}",
+                        "records": records,
+                    }
+                )
+
+            payload = {"format": "account_manager_groups_v1", "groups": groups}
+            self.store = self._store_from_tab_groups(payload)
+            return payload
+        finally:
+            conn.close()
+
+    def save_tab_groups(self, payload: dict):
+        groups = payload.get("groups", []) if isinstance(payload, dict) else []
+        if not isinstance(groups, list):
+            payload = self.default_tab_groups_payload()
+            groups = payload["groups"]
+
+        self.store = self._store_from_tab_groups(payload)
+        conn = self._sqlite_connect()
+        try:
+            cursor = conn.cursor()
+            self._ensure_group_tables(cursor)
+            cursor.execute("DELETE FROM tab_group_records")
+            cursor.execute("DELETE FROM tab_groups")
+            for group_index, group in enumerate(groups):
+                tab_key = str(group.get("key") or uuid.uuid4())
+                title = str(group.get("title") or f"分组{group_index + 1}")
+                cursor.execute(
+                    """
+                    INSERT INTO tab_groups (tab_key, title, order_index)
+                    VALUES (?, ?, ?)
+                    """,
+                    (tab_key, title, group_index),
+                )
+                records = group.get("records", [])
+                if not isinstance(records, list):
+                    records = []
+                for record_index, item in enumerate(records):
+                    if not isinstance(item, dict):
+                        continue
+                    rid = str(item.get("id") or uuid.uuid4())
+                    name = str(item.get("name") or "")
+                    account = str(item.get("account") or "")
+                    password = str(item.get("password") or "")
+                    note = str(item.get("note") or "")
+                    cursor.execute(
+                        """
+                        INSERT INTO tab_group_records
+                        (id, tab_key, name, account, password, note, order_index)
+                        VALUES (?, ?, ?, ?, ?, ?, ?)
+                        """,
+                        (rid, tab_key, name, account, password, note, record_index),
+                    )
+            conn.commit()
+        finally:
+            conn.close()

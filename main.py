@@ -4,7 +4,10 @@ import sys
 # 开发环境下设置 Qt 平台插件路径，避免找不到 qwindows.dll
 if not getattr(sys, "frozen", False):
     import PyQt5
-    _qt_plugins = os.path.join(os.path.dirname(PyQt5.__file__), "Qt5", "plugins", "platforms")
+
+    _qt_plugins = os.path.join(
+        os.path.dirname(PyQt5.__file__), "Qt5", "plugins", "platforms"
+    )
     if os.path.isdir(_qt_plugins):
         os.environ["QT_QPA_PLATFORM_PLUGIN_PATH"] = _qt_plugins
 

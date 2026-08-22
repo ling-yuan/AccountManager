@@ -171,3 +171,6 @@ tmp/*
 
 # data
 *.db
+
+# codegraph
+.codegraph/

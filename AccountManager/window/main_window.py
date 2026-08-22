@@ -1,4 +1,6 @@
 import os
+import json
+import uuid
 from PyQt5.QtWidgets import (
     QMainWindow,
     QTableWidget,
@@ -6,6 +8,9 @@ from PyQt5.QtWidgets import (
     QFileDialog,
     QTableWidgetItem,
     QApplication,
+    QTabWidget,
+    QInputDialog,
+    QMenu,
 )
 from PyQt5 import QtGui
 from PyQt5.QtCore import Qt
@@ -34,6 +39,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     def __init_vars__(self):
         self.tray = None
         self.tools = DataTool()
+        self.tab_stores: dict[str, Store] = {}
 
     def __init_ui__(self):
         # 设置窗口固定大小
@@ -50,10 +56,13 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         horizontal_header = self.tableWidget.horizontalHeader()
         horizontal_header.setFont(header_font)
         self.tableWidget.setHorizontalHeader(horizontal_header)
+        # 初始化分组标签页
+        self.init_tab_widget()
+        self.load_tab_groups()
+        self.action_import_txt.setText("导入分组文件")
+        self.action_export_txt.setText("导出分组文件")
         # 初始化输入框
         self.clear_data()
-        # 初始化表格数据
-        self.refresh_table()
         self.show_log("数据加载完成", 5000)
 
     def __init_slots__(self):
@@ -66,8 +75,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.pushButton_delete.clicked.connect(self.on_click_delete)
         self.pushButton_clear.clicked.connect(self.on_click_clear)
         self.pushButton_query.clicked.connect(self.on_click_query)
-        # 表格
-        self.tableWidget.itemSelectionChanged.connect(self.on_selection_changed)
         # 信号
         self.settings_window.signal_tray.connect(self.use_system_tray)
 
@@ -81,42 +88,303 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         # ctrl+f 查询
         self.pushButton_query.setShortcut("Ctrl+F")
 
+    def init_tab_widget(self):
+        self.tabWidget = QTabWidget(self.centralwidget)
+        self.tabWidget.setMovable(True)
+        self.tabWidget.setTabsClosable(True)
+        self.tabWidget.setDocumentMode(True)
+        self.tabWidget.setStyleSheet(
+            """
+            QTabWidget::pane {
+                border: 0px;
+                border-radius: 6px;
+                border-top: none;
+                top: 0px;
+            }
+            QTabBar {
+                qproperty-drawBase: 0;
+            }
+            QTabBar::tab {
+                background: #edf1f5;
+                color: #2c3e50;
+                border: 1px solid #c8d1dc;
+                border-bottom: none;
+                border-top-left-radius: 6px;
+                border-top-right-radius: 6px;
+                padding: 6px 5px;
+                margin-right: -1px;
+                min-width: 72px;
+            }
+            QTabBar::tab:selected {
+                background: #ffffff;
+                color: #1f6feb;
+                font-weight: bold;
+            }
+            QTabBar::tab:hover:!selected {
+                background: #e3e9f1;
+            }
+            """
+        )
+
+        table_index = self.verticalLayout.indexOf(self.tableWidget)
+        self.verticalLayout.removeWidget(self.tableWidget)
+        self.tabWidget.addTab(self.tableWidget, "分组1")
+        self.verticalLayout.insertWidget(table_index, self.tabWidget)
+
+        self.tabWidget.currentChanged.connect(self.on_tab_changed)
+        self.tabWidget.tabCloseRequested.connect(self.on_tab_close_requested)
+        self.tabWidget.tabBarDoubleClicked.connect(self.on_tab_bar_double_clicked)
+
+        tab_bar = self.tabWidget.tabBar()
+        tab_bar.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        tab_bar.customContextMenuRequested.connect(self.on_tab_context_menu)
+
+        self._bind_table(self.tableWidget)
+        self.tableWidget.setProperty("tab_key", self._new_tab_key())
+        self.tab_stores[self.tableWidget.property("tab_key")] = Store()
+
+    def _new_tab_key(self) -> str:
+        return str(uuid.uuid4())
+
+    def _bind_table(self, table: QTableWidget):
+        table.itemSelectionChanged.connect(self.on_selection_changed)
+
+    def _create_table_widget(self) -> QTableWidget:
+        table = QTableWidget(self.centralwidget)
+        table.setFont(self.tableWidget.font())
+        table.setFocusPolicy(self.tableWidget.focusPolicy())
+        table.setEditTriggers(self.tableWidget.editTriggers())
+        table.setSelectionBehavior(self.tableWidget.selectionBehavior())
+        table.setHorizontalScrollMode(self.tableWidget.horizontalScrollMode())
+        table.setShowGrid(self.tableWidget.showGrid())
+        table.setGridStyle(self.tableWidget.gridStyle())
+        table.setCornerButtonEnabled(self.tableWidget.isCornerButtonEnabled())
+        table.setColumnCount(self.tableWidget.columnCount())
+        table.setRowCount(0)
+        table.setSortingEnabled(self.tableWidget.isSortingEnabled())
+        table.horizontalHeader().setDefaultSectionSize(
+            self.tableWidget.horizontalHeader().defaultSectionSize()
+        )
+        table.horizontalHeader().setMinimumSectionSize(
+            self.tableWidget.horizontalHeader().minimumSectionSize()
+        )
+        table.horizontalHeader().setStretchLastSection(True)
+        table.verticalHeader().setDefaultSectionSize(
+            self.tableWidget.verticalHeader().defaultSectionSize()
+        )
+        for i in range(self.tableWidget.columnCount()):
+            header = self.tableWidget.horizontalHeaderItem(i)
+            title = header.text() if header else ""
+            table.setHorizontalHeaderItem(i, QTableWidgetItem(title))
+        self._bind_table(table)
+        return table
+
+    def current_table(self) -> QTableWidget:
+        widget = self.tabWidget.currentWidget()
+        if isinstance(widget, QTableWidget):
+            return widget
+        return self.tableWidget
+
+    def current_tab_key(self) -> str:
+        table = self.current_table()
+        return table.property("tab_key")
+
+    def current_store(self) -> Store:
+        key = self.current_tab_key()
+        if key not in self.tab_stores:
+            self.tab_stores[key] = Store()
+        return self.tab_stores[key]
+
+    def load_tab_groups(self):
+        payload = self.tools.load_tab_groups()
+        groups = payload.get("groups", []) if isinstance(payload, dict) else []
+        if not groups:
+            payload = self.tools.default_tab_groups_payload()
+            self.apply_tab_groups_payload(payload, save=True)
+            return
+        self.apply_tab_groups_payload(payload, save=False)
+
+    def apply_tab_groups_payload(self, payload: dict, save: bool = True):
+        groups = payload.get("groups", []) if isinstance(payload, dict) else []
+        self.tab_stores.clear()
+        while self.tabWidget.count() > 1:
+            w = self.tabWidget.widget(1)
+            self.tabWidget.removeTab(1)
+            w.deleteLater()
+
+        first = True
+        for group in groups:
+            key = str(group.get("key") or self._new_tab_key())
+            title = str(group.get("title") or "未命名分组")
+            records = group.get("records", [])
+            store = Store()
+            for item in records:
+                if not isinstance(item, dict):
+                    continue
+                store.add(
+                    Data(
+                        name=item.get("name", ""),
+                        account=item.get("account", ""),
+                        password=item.get("password", ""),
+                        note=item.get("note", ""),
+                        id=item.get("id"),
+                    )
+                )
+            self.tab_stores[key] = store
+            if first:
+                first = False
+                self.tableWidget.setProperty("tab_key", key)
+                self.tabWidget.setTabText(0, title)
+                self.refresh_table(self.tableWidget, store)
+            else:
+                self.add_tab(title=title, store=store, key=key, save=False)
+
+        if self.tabWidget.count() == 0 or not groups:
+            fallback_key = self.tableWidget.property("tab_key") or self._new_tab_key()
+            self.tableWidget.setProperty("tab_key", fallback_key)
+            self.tab_stores[fallback_key] = Store()
+            self.tabWidget.setTabText(0, "分组1")
+            self.refresh_table(self.tableWidget, self.tab_stores[fallback_key])
+
+        self.tabWidget.setCurrentIndex(0)
+        self.clear_data()
+        if save:
+            self.save_tab_groups()
+
+    def build_tab_groups_payload(self) -> dict:
+        groups = []
+        for i in range(self.tabWidget.count()):
+            table = self.tabWidget.widget(i)
+            if not isinstance(table, QTableWidget):
+                continue
+            key = table.property("tab_key")
+            title = self.tabWidget.tabText(i)
+            store = self.tab_stores.get(key, Store())
+            groups.append(
+                {
+                    "key": key,
+                    "title": title,
+                    "records": [data.to_dict() for data in store],
+                }
+            )
+        return {"format": "account_manager_groups_v1", "groups": groups}
+
+    def save_tab_groups(self):
+        self.tools.save_tab_groups(self.build_tab_groups_payload())
+
+    def sync_tabs_to_data_tool(self):
+        self.tools.save_tab_groups(self.build_tab_groups_payload())
+
+    def add_tab(
+        self,
+        title: str = "新分组",
+        store: Store | None = None,
+        key: str | None = None,
+        save: bool = True,
+    ):
+        table = self._create_table_widget()
+        tab_key = key or self._new_tab_key()
+        table.setProperty("tab_key", tab_key)
+        self.tab_stores[tab_key] = store if store else Store()
+        self.refresh_table(table, self.tab_stores[tab_key])
+        index = self.tabWidget.addTab(table, title)
+        self.tabWidget.setCurrentIndex(index)
+        if save:
+            self.save_tab_groups()
+        return index
+
+    def rename_tab(self, index: int):
+        if index < 0 or index >= self.tabWidget.count():
+            return
+        old_title = self.tabWidget.tabText(index)
+        new_title, ok = QInputDialog.getText(
+            self, "重命名分组", "请输入新的分组名：", text=old_title
+        )
+        if ok:
+            new_title = new_title.strip()
+            if not new_title:
+                QMessageBox.warning(self, "提示", "分组名不能为空", QMessageBox.Yes)
+                return
+            self.tabWidget.setTabText(index, new_title)
+            self.save_tab_groups()
+
+    def on_tab_context_menu(self, pos):
+        index = self.tabWidget.tabBar().tabAt(pos)
+        if index >= 0:
+            self.tabWidget.setCurrentIndex(index)
+
+        menu = QMenu(self)
+        action_add = menu.addAction("新增分组")
+        action_rename = menu.addAction("重命名分组")
+        action_delete = menu.addAction("删除分组")
+        selected = menu.exec_(self.tabWidget.tabBar().mapToGlobal(pos))
+        if selected == action_add:
+            self.add_tab()
+        elif selected == action_rename:
+            self.rename_tab(self.tabWidget.currentIndex())
+        elif selected == action_delete:
+            self.on_tab_close_requested(self.tabWidget.currentIndex())
+
+    def on_tab_changed(self, _index: int):
+        self.clear_data()
+        table = self.current_table()
+        table.clearSelection()
+        self.refresh_table(table)
+
+    def on_tab_close_requested(self, index: int):
+        if self.tabWidget.count() <= 1:
+            QMessageBox.information(
+                self, "提示", "至少需要保留一个分组", QMessageBox.Yes
+            )
+            return
+        tab_title = self.tabWidget.tabText(index) if index >= 0 else ""
+        reply = QMessageBox.question(
+            self,
+            "确认删除分组",
+            f"确定要删除分组“{tab_title}”吗？\n\n该分组内的记录将一并删除，且无法撤销。",
+            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.No,
+        )
+        if reply != QMessageBox.Yes:
+            return
+        table = self.tabWidget.widget(index)
+        if not isinstance(table, QTableWidget):
+            return
+        key = table.property("tab_key")
+        self.tabWidget.removeTab(index)
+        self.tab_stores.pop(key, None)
+        table.deleteLater()
+        self.clear_data()
+        self.save_tab_groups()
+
+    def on_tab_bar_double_clicked(self, index: int):
+        if index >= 0:
+            self.rename_tab(index)
+
     # slots
     def on_click_import_txt(self):
         file_name = self.choose_file(
-            "导入会覆盖之前保存的记录!\n\n每行数据从左至右顺序应为(名称,账号,密码,备注)\n数据之间用TAB分开",
-            lambda x: x == "txt",
-            "Text Files (*.txt);;All Files (*)",
+            "导入会覆盖当前所有分组与记录，是否继续？\n\n请导入分组同步文件（.amg 或 .json）。",
+            lambda x: x.lower() in ["amg", "json"],
+            "Account Manager Group Files (*.amg *.json);;All Files (*)",
         )
         if not file_name:
             return
 
         try:
-            tmp_info = []
-            try:
-                f = open(file_name, "r", encoding="utf-8")
-                tmp_data = f.readlines()
-            except:
-                f = open(file_name, "r", encoding="gbk")
-                tmp_data = f.readlines()
-            finally:
-                f.close()
-                for i in tmp_data:
-                    # 避免使用嵌套列表推导式，改用普通循环
-                    parts = i.split("\t")
-                    cleaned_parts = []
-                    for t in parts:
-                        cleaned_part = t.strip().replace("\\n", "\n")
-                        cleaned_parts.append(cleaned_part)
-                    tmp_info.append(cleaned_parts)
-            self.tools.store = Store()
-            for info in tmp_info:
-                self.tools.insert_data(Data(*info))
+            with open(file_name, "r", encoding="utf-8") as f:
+                payload = json.load(f)
+
+            groups = payload.get("groups", [])
+            if not isinstance(groups, list):
+                raise ValueError("文件格式错误：缺少 groups 列表")
+
+            self.apply_tab_groups_payload(payload, save=True)
             self.show_log("导入成功", 5000)
         except Exception as e:
             QMessageBox.critical(self, "错误", str(e), QMessageBox.Yes)
         finally:
-            self.refresh_table()
+            self.refresh_table(self.current_table())
 
     def on_click_export_txt(self):
         dir: str = self.choose_dir()
@@ -124,58 +392,66 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             return
         try:
             flag = ""
-            file_name = dir + "/data{}.txt"
+            file_name = dir + "/account_groups{}.amg"
             while os.path.exists(file_name.format(flag)):
                 flag = flag + 1 if flag else 1
 
             with open(file_name.format(flag), "w", encoding="utf-8") as f:
-                for data in self.tools.store:
-                    tmp = [str(item).replace("\n", "\\n") for item in data.to_list()]
-                    f.write("\t".join(tmp) + "\n")
+                json.dump(
+                    self.build_tab_groups_payload(), f, ensure_ascii=False, indent=2
+                )
             self.show_log("导出成功", 5000)
         except Exception as e:
             QMessageBox.critical(self, "错误", str(e), QMessageBox.Yes)
 
     def on_click_settings(self):
-        self.tools.clean_data()
+        self.sync_tabs_to_data_tool()
         self.on_click_clear()
         self.settings_window.show()
         self.settings_window.exec()
         self.on_click_clear()
-        self.tools.save_data()
+        self.save_tab_groups()
 
     def on_click_modify(self):
         data = self.get_data()
+        store = self.current_store()
         if self.lineEdit_name.id:
-            self.tools.modify_data(data)
+            store.modify(data)
             self.show_log("修改成功", 5000)
         else:
-            self.tools.insert_data(data)
+            store.add(data)
             self.show_log("添加成功", 5000)
+        store.sort()
+        self.save_tab_groups()
         self.on_click_clear()
 
     def on_click_delete(self):
-        store = self.get_selected_data()
-        for data in store:
-            self.tools.delete_data(data)
-        self.show_log(f"已删除{store.length}条数据", 5000)
+        selected_store = self.get_selected_data()
+        current_store = self.current_store()
+        for data in selected_store:
+            current_store.delete(data)
+        self.show_log(f"已删除{selected_store.length}条数据", 5000)
+        self.save_tab_groups()
         self.on_click_clear()
 
     def on_click_clear(self):
         self.clear_data()
-        self.tableWidget.clearSelection()
-        self.refresh_table()
+        table = self.current_table()
+        table.clearSelection()
+        self.refresh_table(table)
 
     def on_click_query(self):
-        store = self.tools.search(
+        pattern = Data(
             name=self.lineEdit_name.text(),
             account=self.lineEdit_account.text(),
             password=self.lineEdit_password.text(),
             note=self.textEdit_note.toPlainText(),
         )
-        self.tableWidget.clearSelection()
+        store = self.current_store().search(pattern)
+        table = self.current_table()
+        table.clearSelection()
         self.show_log(f"查询到{store.length}条数据", 5000)
-        self.refresh_table(store)
+        self.refresh_table(table, store)
 
     def on_selection_changed(self):
         store = self.get_selected_data()
@@ -240,15 +516,21 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.statusbar.clearMessage()
         self.statusbar.showMessage(msg, msecs)
 
-    def refresh_table(self, store: Store | None = None):
-        if not store:
-            store = self.tools.store
+    def refresh_table(
+        self, table: QTableWidget | None = None, store: Store | None = None
+    ):
+        table = table or self.current_table()
+        if store is None:
+            store = self.tab_stores.get(table.property("tab_key"), Store())
+        # 填充表格时临时关闭排序，避免排序触发行移动导致数据错位
+        sorting_enabled = table.isSortingEnabled()
+        table.setSortingEnabled(False)
         # 暂时禁用自动调整以提高性能
-        self.tableWidget.setUpdatesEnabled(False)
+        table.setUpdatesEnabled(False)
         # 清空表格
-        self.tableWidget.clearContents()
-        self.tableWidget.clearSelection()
-        self.tableWidget.setRowCount(store.length)
+        table.clearContents()
+        table.clearSelection()
+        table.setRowCount(store.length)
         for i, data in enumerate(store):
             # 创建表格项
             name_item = Ui_TableItem(id=data.id, text=data.name)
@@ -258,29 +540,38 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             # 设置文本自动换行
             note_item.setData(Qt.ItemDataRole.DisplayRole, data.note)
             # 添加到表格
-            self.tableWidget.setItem(i, 0, name_item)
-            self.tableWidget.setItem(i, 1, account_item)
-            self.tableWidget.setItem(i, 2, password_item)
-            self.tableWidget.setItem(i, 3, note_item)
+            table.setItem(i, 0, name_item)
+            table.setItem(i, 1, account_item)
+            table.setItem(i, 2, password_item)
+            table.setItem(i, 3, note_item)
         # 重新启用更新并调整大小
-        self.tableWidget.setUpdatesEnabled(True)
-        self.tableWidget.resizeRowsToContents()  # 调整所有行高
+        table.setUpdatesEnabled(True)
+        table.resizeRowsToContents()  # 调整所有行高
+        table.setSortingEnabled(sorting_enabled)
 
     def get_selected_data(self):
-        t = self.tableWidget.selectedItems()
+        table = self.current_table()
+        t = table.selectedItems()
         rows = list(set([i.row() for i in t]))
-        store = Store(
-            *[
+        selected = []
+        for row in rows:
+            name_item = table.item(row, 0)
+            account_item = table.item(row, 1)
+            password_item = table.item(row, 2)
+            note_item = table.item(row, 3)
+            # 在刷新/排序切换瞬间，可能出现暂时空单元格，跳过避免崩溃
+            if not all([name_item, account_item, password_item, note_item]):
+                continue
+            selected.append(
                 Data(
-                    id=self.tableWidget.item(row, 0).id,
-                    name=self.tableWidget.item(row, 0).text(),
-                    account=self.tableWidget.item(row, 1).text(),
-                    password=self.tableWidget.item(row, 2).text(),
-                    note=self.tableWidget.item(row, 3).text(),
+                    id=name_item.id,
+                    name=name_item.text(),
+                    account=account_item.text(),
+                    password=password_item.text(),
+                    note=note_item.text(),
                 )
-                for row in rows
-            ]
-        )
+            )
+        store = Store(*selected)
         return store
 
     def set_data(self, data: Data):
@@ -320,14 +611,14 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             or not isinstance(widget_at_pos, QTableWidget)
         ):
             if event.button() == Qt.MouseButton.LeftButton:
-                self.tableWidget.clearSelection()
+                self.current_table().clearSelection()
                 self.show_log("已清除选择", 2000)
 
         # 调用父类方法保持正常行为
         super().mousePressEvent(event)
 
     def closeEvent(self, event: QtGui.QMouseEvent):
-        self.tools.save_data()
+        self.save_tab_groups()
         event.accept()
         if not self.config.use_systemtray:
             self.app.quit()

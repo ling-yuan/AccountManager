@@ -38,7 +38,7 @@ class Config:
             "auto_start": False,
             "use_systemtray": True,
             "auto_update": False,
-            "data_save_type": "txt",
+            "data_save_type": "sqlite",
             "txt": {"path": "./"},
             "sqlite": {"path": "./"},
             "mysql": {
@@ -62,7 +62,7 @@ class Config:
                 "password": "",
             },
             "about": {
-                "version": "2.1",
+                "version": "2.2.0",
             },
         }
 
@@ -275,3 +275,4 @@ class Config:
     @webdav_password.setter
     def webdav_password(self, value: str):
         self._settings.setValue("webdav/password", value)
+

@@ -38,7 +38,8 @@ class SettingsWindow(Ui_SettingsForm, QDialog):
         self.checkBox_use_systemtray.setChecked(self.config.use_systemtray)
         self.checkBox_auto_update.setChecked(self.config.auto_update)
         # 数据保存
-        self.comboBox_save_type.setCurrentText(self.config.data_save_type)
+        self.comboBox_save_type.setCurrentText("sqlite")
+        self.comboBox_save_type.setEnabled(False)
         self.lineEdit_txt_save_path.setText(self.config.txt_path)
         self.lineEdit_sqlite_save_path.setText(self.config.sqlite_path)
         self.lineEdit_mysql_host.setText(self.config.mysql_host)
@@ -219,6 +220,10 @@ class SettingsWindow(Ui_SettingsForm, QDialog):
         self.config.webdav_account = self.lineEdit_webdav_account.text()
         self.config.webdav_password = self.lineEdit_webdav_password.text()
 
+        # 先让主窗口将当前分组状态落盘，避免备份到旧分组数据
+        if self.parent() and hasattr(self.parent(), "save_tab_groups"):
+            self.parent().save_tab_groups()
+
         # 获取主窗口的数据工具实例（如果有parent）
         if self.parent() and hasattr(self.parent(), "tools"):
             data_tool = self.parent().tools
@@ -303,39 +308,10 @@ class SettingsWindow(Ui_SettingsForm, QDialog):
             self.config.use_systemtray = self.checkBox_use_systemtray.isChecked()
         self.config.auto_update = self.checkBox_auto_update.isChecked()
         # 数据
-        dtype = self.comboBox_save_type.currentText()
-        if dtype == "txt":
-            result = TxtTools.test_connection(self.lineEdit_txt_save_path.text())
-            if result:
-                self.config.txt_path = self.lineEdit_txt_save_path.text()
-        elif dtype == "sqlite":
-            result = SqliteTools.test_connection(self.lineEdit_sqlite_save_path.text())
-            if result:
-                self.config.sqlite_path = self.lineEdit_sqlite_save_path.text()
-        elif dtype == "mysql":
-            result = MysqlTools.test_connection(
-                self.lineEdit_mysql_host.text(),
-                self.lineEdit_mysql_username.text(),
-                self.lineEdit_mysql_password.text(),
-                self.spinBox_mysql_port.value(),
-            )
-            if result:
-                self.config.mysql_host = self.lineEdit_mysql_host.text()
-                self.config.mysql_username = self.lineEdit_mysql_username.text()
-                self.config.mysql_password = self.lineEdit_mysql_password.text()
-                self.config.mysql_port = self.spinBox_mysql_port.value()
-        elif dtype == "mongodb":
-            result = MongodbTools.test_connection(
-                self.lineEdit_mongodb_host.text(),
-                self.lineEdit_mongodb_username.text(),
-                self.lineEdit_mongodb_password.text(),
-                self.spinBox_mongodb_port.value(),
-            )
-            if result:
-                self.config.mongodb_host = self.lineEdit_mongodb_host.text()
-                self.config.mongodb_username = self.lineEdit_mongodb_username.text()
-                self.config.mongodb_password = self.lineEdit_mongodb_password.text()
-                self.config.mongodb_port = self.spinBox_mongodb_port.value()
+        dtype = "sqlite"
+        result = SqliteTools.test_connection(self.lineEdit_sqlite_save_path.text())
+        if result:
+            self.config.sqlite_path = self.lineEdit_sqlite_save_path.text()
         if result:
             self.config.data_save_type = dtype
         else:
@@ -367,8 +343,10 @@ class SettingsWindow(Ui_SettingsForm, QDialog):
             if operation_type == "备份":
                 QtWidgets.QMessageBox.information(self, "成功", "数据备份成功！")
             elif operation_type == "恢复":
+                if self.parent() and hasattr(self.parent(), "load_tab_groups"):
+                    self.parent().load_tab_groups()
                 QtWidgets.QMessageBox.information(
-                    self, "成功", "数据恢复成功！\n请重启应用以查看恢复的数据"
+                    self, "成功", "数据恢复成功！"
                 )
         else:
             QtWidgets.QMessageBox.critical(
