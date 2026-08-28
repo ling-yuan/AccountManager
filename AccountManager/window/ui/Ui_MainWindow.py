@@ -24,13 +24,19 @@ class Ui_MainWindow(object):
         font.setKerning(True)
         MainWindow.setFont(font)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/resource/resource/icon.ico"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(
+            QtGui.QPixmap(":/resource/resource/icon.ico"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         MainWindow.setWindowIcon(icon)
-        MainWindow.setStyleSheet("QMainWindow {background-color: #f8f9fa;color: #2c3e50;}QWidget {background-color: #f8f9fa;color: #2c3e50;}QLabel {color: #34495e;font-weight: normal;background-color: transparent;padding: 2px;}QLineEdit {background-color: #ffffff;border: 1px solid #bdc3c7;border-radius: 4px;padding: 4px 8px;color: #2c3e50;selection-background-color: #3498db;}QLineEdit:focus {border-color: #3498db;outline: none;}QLineEdit:hover {border-color: #7fb3d3;}QTextEdit {background-color: #ffffff;border: 1px solid #bdc3c7;border-radius: 4px;padding: 4px;color: #2c3e50;selection-background-color: #3498db;}QTextEdit:focus {border-color: #3498db;outline: none;}QPushButton {background-color: #ecf0f1;border: 1px solid #bdc3c7;border-radius: 4px;padding: 6px 12px;color: #2c3e50;min-height: 20px;}QPushButton:hover {background-color: #d5dbdb;border-color: #95a5a6;}QPushButton:pressed {background-color: #bdc3c7;border-color: #7f8c8d;}QPushButton:focus {border-color: #3498db;outline: none;}QTableWidget {background-color: #ffffff;border: 1px solid #bdc3c7;gridline-color: #ecf0f1;color: #2c3e50;outline: none;selection-background-color: #e8f4f8;}QTableWidget QTableCornerButton::section {background-color: #ecf0f1;border: none;border-bottom: 1px solid #bdc3c7;border-right: 1px solid #bdc3c7;}QTableWidget QHeaderView::section {background-color: #ecf0f1;color: #2c3e50;border: none;border-bottom: 1px solid #bdc3c7;border-right: 1px solid #bdc3c7;padding: 4px;font-weight: normal;}QTableWidget QHeaderView::section:vertical:last {border-bottom: none;}QTableWidget::item {padding: 4px;border: none;border-bottom: 1px solid #ecf0f1;border-right: 1px solid #ecf0f1;}QTableWidget::item:selected {background-color: #e8f4f8;color: #2c3e50;}QTableWidget::item:hover {background-color: #f1f8ff;}QHeaderView::section {background-color: #ecf0f1;color: #2c3e50;border: 1px solid #bdc3c7;padding: 4px;font-weight: normal;}QHeaderView::section:hover {background-color: #d5dbdb;}QMenuBar {background-color: #ecf0f1;color: #2c3e50;border-bottom: 1px solid #bdc3c7;}QMenuBar::item {padding: 4px 8px;background-color: transparent;}QMenuBar::item:selected {background-color: #d5dbdb;}QMenuBar::item:pressed {background-color: #bdc3c7;}QMenu {background-color: #ffffff;border: 1px solid #bdc3c7;border-radius: 4px;padding: 2px;color: #2c3e50;}QMenu::item {padding: 4px 16px;border-radius: 2px;}QMenu::item:selected {background-color: #e8f4f8;}QStatusBar {background-color: #ecf0f1;color: #2c3e50;border-top: 1px solid #bdc3c7;}QScrollBar:vertical {background-color: #f8f9fa;border: none;width: 8px;}QScrollBar::handle:vertical {background-color: #bdc3c7;min-height: 20px;}QScrollBar::handle:vertical:hover {background-color: #95a5a6;}QScrollBar::add-line:vertical,QScrollBar::sub-line:vertical {height: 0px;}QScrollBar:horizontal {background-color: #f8f9fa;border: none;height: 8px;}QScrollBar::handle:horizontal {background-color: #bdc3c7;min-width: 20px;}QScrollBar::handle:horizontal:hover {background-color: #95a5a6;}QScrollBar::add-line:horizontal,QScrollBar::sub-line:horizontal {width: 0px;}\n"
-"QMainWindow,\n"
-"QMainWindow * {\n"
-"    font-family: \"Maple Mono CN\";\n"
-"}")
+        MainWindow.setStyleSheet(
+            "QMainWindow {background-color: #f8f9fa;color: #2c3e50;}QWidget {background-color: #f8f9fa;color: #2c3e50;}QLabel {color: #34495e;font-weight: normal;background-color: transparent;padding: 2px;}QLineEdit {background-color: #ffffff;border: 1px solid #bdc3c7;border-radius: 4px;padding: 4px 8px;color: #2c3e50;selection-background-color: #3498db;}QLineEdit:focus {border-color: #3498db;outline: none;}QLineEdit:hover {border-color: #7fb3d3;}QTextEdit {background-color: #ffffff;border: 1px solid #bdc3c7;border-radius: 4px;padding: 4px;color: #2c3e50;selection-background-color: #3498db;}QTextEdit:focus {border-color: #3498db;outline: none;}QPushButton {background-color: #ecf0f1;border: 1px solid #bdc3c7;border-radius: 4px;padding: 6px 12px;color: #2c3e50;min-height: 20px;}QPushButton:hover {background-color: #d5dbdb;border-color: #95a5a6;}QPushButton:pressed {background-color: #bdc3c7;border-color: #7f8c8d;}QPushButton:focus {border-color: #3498db;outline: none;}QTableWidget {background-color: #ffffff;border: 1px solid #bdc3c7;gridline-color: #ecf0f1;color: #2c3e50;outline: none;selection-background-color: #e8f4f8;}QTableWidget QTableCornerButton::section {background-color: #ecf0f1;border: none;border-bottom: 1px solid #bdc3c7;border-right: 1px solid #bdc3c7;}QTableWidget QHeaderView::section {background-color: #ecf0f1;color: #2c3e50;border: none;border-bottom: 1px solid #bdc3c7;border-right: 1px solid #bdc3c7;padding: 4px;font-weight: normal;}QTableWidget QHeaderView::section:vertical:last {border-bottom: none;}QTableWidget::item {padding: 4px;border: none;border-bottom: 1px solid #ecf0f1;border-right: 1px solid #ecf0f1;}QTableWidget::item:selected {background-color: #e8f4f8;color: #2c3e50;}QTableWidget::item:hover {background-color: #f1f8ff;}QHeaderView::section {background-color: #ecf0f1;color: #2c3e50;border: 1px solid #bdc3c7;padding: 4px;font-weight: normal;}QHeaderView::section:hover {background-color: #d5dbdb;}QMenuBar {background-color: #ecf0f1;color: #2c3e50;border-bottom: 1px solid #bdc3c7;}QMenuBar::item {padding: 4px 8px;background-color: transparent;}QMenuBar::item:selected {background-color: #d5dbdb;}QMenuBar::item:pressed {background-color: #bdc3c7;}QMenu {background-color: #ffffff;border: 1px solid #bdc3c7;border-radius: 4px;padding: 2px;color: #2c3e50;}QMenu::item {padding: 4px 16px;border-radius: 2px;}QMenu::item:selected {background-color: #e8f4f8;}QStatusBar {background-color: #ecf0f1;color: #2c3e50;border-top: 1px solid #bdc3c7;}QScrollBar:vertical {background-color: #f8f9fa;border: none;width: 8px;}QScrollBar::handle:vertical {background-color: #bdc3c7;min-height: 20px;}QScrollBar::handle:vertical:hover {background-color: #95a5a6;}QScrollBar::add-line:vertical,QScrollBar::sub-line:vertical {height: 0px;}QScrollBar:horizontal {background-color: #f8f9fa;border: none;height: 8px;}QScrollBar::handle:horizontal {background-color: #bdc3c7;min-width: 20px;}QScrollBar::handle:horizontal:hover {background-color: #95a5a6;}QScrollBar::add-line:horizontal,QScrollBar::sub-line:horizontal {width: 0px;}\n"
+            "QMainWindow,\n"
+            "QMainWindow * {\n"
+            '    font-family: "Maple Mono CN";\n'
+            "}"
+        )
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         font = QtGui.QFont()
         font.setBold(True)
@@ -208,7 +214,9 @@ class Ui_MainWindow(object):
         self.tableWidget.setFocusPolicy(QtCore.Qt.NoFocus)
         self.tableWidget.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         self.tableWidget.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
-        self.tableWidget.setHorizontalScrollMode(QtWidgets.QAbstractItemView.ScrollPerPixel)
+        self.tableWidget.setHorizontalScrollMode(
+            QtWidgets.QAbstractItemView.ScrollPerPixel
+        )
         self.tableWidget.setShowGrid(True)
         self.tableWidget.setGridStyle(QtCore.Qt.SolidLine)
         self.tableWidget.setCornerButtonEnabled(True)
@@ -292,7 +300,11 @@ class Ui_MainWindow(object):
         font.setWeight(50)
         self.menu_import.setFont(font)
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(":/resource/resource/import.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon1.addPixmap(
+            QtGui.QPixmap(":/resource/resource/import.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.menu_import.setIcon(icon1)
         self.menu_import.setObjectName("menu_import")
         self.menu_export = QtWidgets.QMenu(self.menu_file)
@@ -301,7 +313,11 @@ class Ui_MainWindow(object):
         font.setWeight(50)
         self.menu_export.setFont(font)
         icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap(":/resource/resource/export.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon2.addPixmap(
+            QtGui.QPixmap(":/resource/resource/export.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.menu_export.setIcon(icon2)
         self.menu_export.setObjectName("menu_export")
         self.menu_tools = QtWidgets.QMenu(self.menubar)
@@ -326,7 +342,11 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
         self.action_import_txt = QtWidgets.QAction(MainWindow)
         icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap(":/resource/resource/txt.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon3.addPixmap(
+            QtGui.QPixmap(":/resource/resource/txt.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.action_import_txt.setIcon(icon3)
         font = QtGui.QFont()
         self.action_import_txt.setFont(font)
@@ -336,9 +356,19 @@ class Ui_MainWindow(object):
         font = QtGui.QFont()
         self.action_export_txt.setFont(font)
         self.action_export_txt.setObjectName("action_export_txt")
+        self.action_webdav_backup = QtWidgets.QAction(MainWindow)
+        self.action_webdav_backup.setFont(font)
+        self.action_webdav_backup.setObjectName("action_webdav_backup")
+        self.action_webdav_restore = QtWidgets.QAction(MainWindow)
+        self.action_webdav_restore.setFont(font)
+        self.action_webdav_restore.setObjectName("action_webdav_restore")
         self.action_settings = QtWidgets.QAction(MainWindow)
         icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap(":/resource/resource/settings.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon4.addPixmap(
+            QtGui.QPixmap(":/resource/resource/settings.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.action_settings.setIcon(icon4)
         font = QtGui.QFont()
         self.action_settings.setFont(font)
@@ -347,6 +377,8 @@ class Ui_MainWindow(object):
         self.menu_export.addAction(self.action_export_txt)
         self.menu_file.addAction(self.menu_import.menuAction())
         self.menu_file.addAction(self.menu_export.menuAction())
+        self.menu_tools.addAction(self.action_webdav_backup)
+        self.menu_tools.addAction(self.action_webdav_restore)
         self.menu_settings.addAction(self.action_settings)
         self.menubar.addAction(self.menu_file.menuAction())
         self.menubar.addAction(self.menu_tools.menuAction())
@@ -393,5 +425,9 @@ class Ui_MainWindow(object):
         self.menu_settings.setTitle(_translate("MainWindow", "设置"))
         self.action_import_txt.setText(_translate("MainWindow", "txt"))
         self.action_export_txt.setText(_translate("MainWindow", "txt"))
+        self.action_webdav_backup.setText(_translate("MainWindow", "立即备份"))
+        self.action_webdav_restore.setText(_translate("MainWindow", "恢复数据"))
         self.action_settings.setText(_translate("MainWindow", "设置"))
+
+
 from . import Image_rc

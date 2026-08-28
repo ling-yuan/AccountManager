@@ -62,7 +62,7 @@ class Config:
                 "password": "",
             },
             "about": {
-                "version": "2.2.0",
+                "version": "2.3.0",
             },
         }
 
@@ -275,4 +275,3 @@ class Config:
     @webdav_password.setter
     def webdav_password(self, value: str):
         self._settings.setValue("webdav/password", value)
-

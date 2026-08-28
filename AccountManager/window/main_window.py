@@ -69,6 +69,12 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         # 菜单栏
         self.action_import_txt.triggered.connect(self.on_click_import_txt)
         self.action_export_txt.triggered.connect(self.on_click_export_txt)
+        self.action_webdav_backup.triggered.connect(
+            self.settings_window.on_click_webdav_backup
+        )
+        self.action_webdav_restore.triggered.connect(
+            self.settings_window.on_click_webdav_restore
+        )
         self.action_settings.triggered.connect(self.on_click_settings)
         # 按钮
         self.pushButton_modify.clicked.connect(self.on_click_modify)
@@ -93,8 +99,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.tabWidget.setMovable(True)
         self.tabWidget.setTabsClosable(True)
         self.tabWidget.setDocumentMode(True)
-        self.tabWidget.setStyleSheet(
-            """
+        self.tabWidget.setStyleSheet("""
             QTabWidget::pane {
                 border: 0px;
                 border-radius: 6px;
@@ -123,8 +128,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             QTabBar::tab:hover:!selected {
                 background: #e3e9f1;
             }
-            """
-        )
+            """)
 
         table_index = self.verticalLayout.indexOf(self.tableWidget)
         self.verticalLayout.removeWidget(self.tableWidget)

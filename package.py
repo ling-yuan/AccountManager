@@ -4,7 +4,7 @@ import subprocess
 import sys
 
 APP_NAME = "Account Manager"
-APP_VERSION = "2.2.0"
+APP_VERSION = "2.3.0"
 FILE_VERSION = f"{APP_VERSION}.0"
 COMPANY_NAME = "BaiShi"
 COPYRIGHT = "Copyright (C) 2026"
