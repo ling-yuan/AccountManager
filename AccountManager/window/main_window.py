@@ -13,9 +13,10 @@ from PyQt5.QtWidgets import (
     QMenu,
 )
 from PyQt5 import QtGui
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QTimer
 
 from ..tools.data_tools import *
+from ..tools.custom_thread import CustomThread
 from .ui.Ui_MainWindow import Ui_MainWindow
 from .ui.Ui_SystemTray import SystemTrayIcon
 from .ui.Ui_TableItem import Ui_TableItem
@@ -35,11 +36,18 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.__init_ui__()
         self.__init_slots__()
         self.__init_keypress__()
+        self.__init_webdav_sync__()
 
     def __init_vars__(self):
         self.tray = None
         self.tools = DataTool()
         self.tab_stores: dict[str, Store] = {}
+        self.webdav_sync_thread = None
+        self._webdav_sync_result = {}
+        self._webdav_saved_payload = None
+        self._webdav_pull_pending = False
+        self._webdav_upload_pending = False
+        self._webdav_sync_closing = False
 
     def __init_ui__(self):
         # 设置窗口固定大小
@@ -51,7 +59,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.use_system_tray(self.config.use_systemtray)
         # 表格设置
         header_font = QtGui.QFont()
-        # header_font.setFamily("Maple Mono CN")
+        # header_font.setFamily("Maple Mono NF CN")
         header_font.setPointSize(9)
         horizontal_header = self.tableWidget.horizontalHeader()
         horizontal_header.setFont(header_font)
@@ -83,6 +91,232 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.pushButton_query.clicked.connect(self.on_click_query)
         # 信号
         self.settings_window.signal_tray.connect(self.use_system_tray)
+
+    def __init_webdav_sync__(self):
+        self._webdav_saved_payload = self.build_tab_groups_payload()
+        self.webdav_task_timer = QTimer(self)
+        self.webdav_task_timer.setSingleShot(True)
+        self.webdav_task_timer.timeout.connect(self._process_webdav_tasks)
+        self.webdav_sync_timer = QTimer(self)
+        self.webdav_sync_timer.setInterval(2 * 60 * 60 * 1000)
+        self.webdav_sync_timer.setTimerType(Qt.TimerType.PreciseTimer)
+        self.webdav_sync_timer.timeout.connect(self.sync_webdav_data)
+        self.app.aboutToQuit.connect(self.stop_webdav_sync)
+        self.webdav_sync_timer.start()
+        QTimer.singleShot(0, self.sync_webdav_data)
+
+    def _webdav_config_snapshot(self) -> tuple:
+        return (
+            self.config.webdav_protocol,
+            self.config.webdav_host,
+            self.config.webdav_port,
+            self.config.webdav_path,
+            self.config.webdav_account,
+            self.config.webdav_password,
+        )
+
+    def sync_webdav_data(self):
+        self._webdav_pull_pending = True
+        self.webdav_task_timer.start(0)
+
+    def _process_webdav_tasks(self):
+        if self._webdav_sync_closing or self.webdav_sync_thread is not None:
+            return
+        if not (self._webdav_pull_pending or self._webdav_upload_pending):
+            return
+        webdav_tools = WebDAVTools()
+        if not all(
+            (
+                webdav_tools.host.strip(),
+                webdav_tools.account.strip(),
+                webdav_tools.password,
+            )
+        ):
+            self._webdav_pull_pending = False
+            self._webdav_upload_pending = False
+            return
+        if self.settings_window.running_threads > 0 or self.settings_window.isVisible():
+            self.webdav_task_timer.start(1000)
+            return
+
+        operation = "拉取" if self._webdav_pull_pending else "上传"
+        self._webdav_sync_result = {
+            "operation": operation,
+            "config": self._webdav_config_snapshot(),
+        }
+        if operation == "上传":
+            self._webdav_upload_pending = False
+            self._webdav_sync_result["payload"] = self.build_tab_groups_payload()
+        else:
+            self._webdav_pull_pending = False
+        self.webdav_sync_thread = CustomThread(
+            self._run_webdav_task,
+            "同步",
+            webdav_tools,
+            self._webdav_sync_result,
+        )
+        self.webdav_sync_thread.setParent(self)
+        self.webdav_sync_thread.signal_result.connect(self.on_webdav_sync_finished)
+        self.webdav_sync_thread.finished.connect(self.on_webdav_sync_thread_finished)
+        self._webdav_sync_actions = [
+            (action, action.isEnabled())
+            for action in (
+                self.action_webdav_backup,
+                self.action_webdav_restore,
+                self.action_settings,
+            )
+        ]
+        for action, enabled in self._webdav_sync_actions:
+            if enabled:
+                action.setEnabled(False)
+        self.show_log(f"正在{operation} WebDAV 数据...")
+        self.webdav_sync_thread.start()
+
+    @staticmethod
+    def _run_webdav_task(webdav_tools: WebDAVTools, sync_result: dict) -> bool:
+        try:
+            if sync_result["operation"] == "上传":
+                result = webdav_tools.upload_tab_groups(sync_result["payload"])
+            else:
+                sync_result["payload"] = webdav_tools.download_tab_groups(
+                    allow_missing=True
+                )
+                result = sync_result["payload"] is not None
+        except Exception as exception:
+            sync_result["error"] = str(exception)
+            result = False
+        sync_result["success"] = result
+        return result
+
+    def on_webdav_sync_finished(self, result: bool):
+        if self._webdav_sync_closing:
+            return
+        self._webdav_sync_result["handled"] = True
+        if self._webdav_sync_result["config"] != self._webdav_config_snapshot():
+            self._webdav_pull_pending = True
+            self.show_log("WebDAV 配置已更改，将重新同步", 5000)
+            return
+        operation = self._webdav_sync_result["operation"]
+        if result and operation == "拉取":
+            try:
+                self._merge_webdav_payload(self._webdav_sync_result["payload"])
+                self.show_log("WebDAV 数据合并完成，等待上传", 5000)
+                return
+            except Exception as exception:
+                self._webdav_sync_result["error"] = str(exception)
+                result = False
+        if result:
+            self.show_log("WebDAV 数据上传完成", 5000)
+        else:
+            if operation == "上传":
+                self._webdav_upload_pending = True
+            else:
+                self._webdav_pull_pending = True
+            self._webdav_sync_result["retry_delay"] = 30000
+            self.show_log(f"WebDAV {operation}失败，30 秒后重试", 10000)
+
+    def _merge_webdav_payload(self, remote_payload: dict):
+        current_payload = self.build_tab_groups_payload()
+        payload = DataTool.merge_tab_groups(current_payload, remote_payload)
+        if payload != current_payload:
+            self._apply_webdav_merge(payload)
+        self._webdav_saved_payload = self.build_tab_groups_payload()
+        self._webdav_upload_pending = True
+
+    def _apply_webdav_merge(self, payload: dict):
+        current_key = self.current_tab_key()
+        record_id = self.lineEdit_name.id
+        inputs = [
+            (widget, widget.text(), widget.isModified())
+            for widget in (
+                self.lineEdit_name,
+                self.lineEdit_account,
+                self.lineEdit_password,
+            )
+        ]
+        note = self.textEdit_note.toPlainText()
+        note_modified = self.textEdit_note.document().isModified()
+        self.tools.save_tab_groups(payload)
+        self.apply_tab_groups_payload(payload, save=False)
+        for index in range(self.tabWidget.count()):
+            if self.tabWidget.widget(index).property("tab_key") == current_key:
+                self.tabWidget.setCurrentIndex(index)
+                break
+        self.lineEdit_name.id = record_id
+        for widget, text, modified in inputs:
+            widget.setText(text)
+            widget.setModified(modified)
+        self.textEdit_note.setPlainText(note)
+        self.textEdit_note.document().setModified(note_modified)
+
+    def on_webdav_sync_thread_finished(self):
+        thread = self.webdav_sync_thread
+        retry_delay = self._webdav_sync_result.get("retry_delay", 0)
+        self.webdav_sync_thread = None
+        self._webdav_sync_result = {}
+        for action, enabled in self._webdav_sync_actions:
+            action.setEnabled(enabled)
+        thread.deleteLater()
+        if not self._webdav_sync_closing and (
+            self._webdav_pull_pending or self._webdav_upload_pending
+        ):
+            self.webdav_task_timer.start(retry_delay)
+
+    def stop_webdav_sync(self):
+        if self._webdav_sync_closing:
+            return
+        self._webdav_sync_closing = True
+        self.webdav_sync_timer.stop()
+        self.webdav_task_timer.stop()
+        if self.webdav_sync_thread is not None:
+            self.webdav_sync_thread.wait()
+            state = self._webdav_sync_result
+            if not state.get("handled"):
+                if state["config"] != self._webdav_config_snapshot():
+                    self._webdav_pull_pending = True
+                elif state["operation"] == "拉取":
+                    if state.get("success"):
+                        try:
+                            self._merge_webdav_payload(state["payload"])
+                        except Exception as exception:
+                            print(f"退出前 WebDAV 合并失败: {exception}")
+                            return
+                    else:
+                        self._webdav_pull_pending = True
+                elif not state.get("success"):
+                    self._webdav_upload_pending = True
+        if self._webdav_pull_pending or self._webdav_upload_pending:
+            webdav_tools = WebDAVTools()
+            if not all(
+                (
+                    webdav_tools.host.strip(),
+                    webdav_tools.account.strip(),
+                    webdav_tools.password,
+                )
+            ):
+                return
+            while self._webdav_pull_pending or self._webdav_upload_pending:
+                operation = "拉取" if self._webdav_pull_pending else "上传"
+                state = {"operation": operation}
+                if operation == "上传":
+                    state["payload"] = self.build_tab_groups_payload()
+                final_task = CustomThread(
+                    self._run_webdav_task, "同步", webdav_tools, state
+                )
+                final_task.start()
+                final_task.wait()
+                if not state.get("success"):
+                    print(f"退出前 WebDAV {operation}失败，本地数据已保留")
+                    return
+                if operation == "拉取":
+                    try:
+                        self._merge_webdav_payload(state["payload"])
+                    except Exception as exception:
+                        print(f"退出前 WebDAV 合并失败: {exception}")
+                        return
+                    self._webdav_pull_pending = False
+                else:
+                    self._webdav_upload_pending = False
 
     def __init_keypress__(self):
         # ctrl+s 保存/修改
@@ -274,7 +508,13 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         return {"format": "account_manager_groups_v1", "groups": groups}
 
     def save_tab_groups(self):
-        self.tools.save_tab_groups(self.build_tab_groups_payload())
+        payload = self.build_tab_groups_payload()
+        self.tools.save_tab_groups(payload)
+        changed = payload != self._webdav_saved_payload
+        self._webdav_saved_payload = payload
+        if changed and hasattr(self, "webdav_task_timer"):
+            self._webdav_upload_pending = True
+            self.webdav_task_timer.start(0)
 
     def sync_tabs_to_data_tool(self):
         self.tools.save_tab_groups(self.build_tab_groups_payload())
@@ -600,6 +840,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.lineEdit_account.clear()
         self.lineEdit_password.clear()
         self.textEdit_note.clear()
+        self.lineEdit_name.setModified(False)
+        self.lineEdit_account.setModified(False)
+        self.lineEdit_password.setModified(False)
+        self.textEdit_note.document().setModified(False)
 
     # 其他事件
     def mousePressEvent(self, event: QtGui.QMouseEvent):

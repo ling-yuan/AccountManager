@@ -62,7 +62,7 @@ class Config:
                 "password": "",
             },
             "about": {
-                "version": "2.3.0",
+                "version": "2.3.1",
             },
         }
 
@@ -212,9 +212,7 @@ class Config:
 
     @property
     def version(self) -> str:
-        return self._settings.value(
-            "about/version", self._default_config["about"]["version"], type=str
-        )
+        return self._default_config["about"]["version"]
 
     @property
     def webdav_protocol(self) -> str:

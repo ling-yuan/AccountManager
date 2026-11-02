@@ -119,8 +119,7 @@ class SqliteTools(BaseTools):
     def get_connection(self):
         conn = sqlite3.connect(self.path + "/data.db")
         cursor = conn.cursor()
-        cursor.execute(
-            """
+        cursor.execute("""
             CREATE TABLE IF NOT EXISTS accounts (
                 id INTEGER PRIMARY KEY,
                 name TEXT,
@@ -128,8 +127,7 @@ class SqliteTools(BaseTools):
                 password TEXT,
                 note TEXT
             )
-            """
-        )
+            """)
         return conn, cursor
 
     def _load_data(self):
@@ -469,6 +467,13 @@ class WebDAVTools:
         :return: 备份是否成功
         """
         try:
+            return self.upload_tab_groups(self._build_tab_groups_payload(data_tools))
+        except Exception as exception:
+            print(f"WebDAV备份失败: {exception}")
+            return False
+
+    def upload_tab_groups(self, tab_groups_payload: dict) -> bool:
+        try:
             # 构建WebDAV URL
             url = f"{self.protocol}://{self.host}:{self.port}/{self.path}"
 
@@ -488,8 +493,6 @@ class WebDAVTools:
 
             # 生成备份文件名（包含时间戳）
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-
-            tab_groups_payload = self._build_tab_groups_payload(data_tools)
 
             # 将数据转换为JSON格式
             backup_data = {
@@ -542,6 +545,17 @@ class WebDAVTools:
         :return: 恢复是否成功
         """
         try:
+            payload = self.download_tab_groups()
+            if payload is None:
+                return False
+            data_tools.save_tab_groups(payload)
+            return True
+        except Exception as exception:
+            print(f"WebDAV恢复失败: {exception}")
+            return False
+
+    def download_tab_groups(self, allow_missing: bool = False) -> dict | None:
+        try:
             # 构建WebDAV URL
             url = f"{self.protocol}://{self.host}:{self.port}/{self.path}"
 
@@ -560,7 +574,18 @@ class WebDAVTools:
 
             if not client.check(latest_backup):
                 print("未找到备份文件")
-                return False
+                if allow_missing:
+                    from webdav3.exceptions import RemoteResourceNotFound
+                    from webdav3.urn import Urn
+
+                    try:
+                        response = client.execute_request(
+                            "check", Urn(latest_backup).quote()
+                        )
+                        response.close()
+                    except RemoteResourceNotFound:
+                        return {"format": "account_manager_groups_v1", "groups": []}
+                return None
             # 下载到临时文件（使用二进制模式）
             with tempfile.NamedTemporaryFile(
                 mode="wb", delete=False, suffix=".json"
@@ -625,7 +650,7 @@ class WebDAVTools:
 
                     if backup_json is None:
                         print("数据解密失败")
-                        return False
+                        return None
 
                     # 解析JSON
                     backup_data = json.loads(backup_json)
@@ -639,12 +664,10 @@ class WebDAVTools:
                     and isinstance(tab_groups_payload.get("groups"), list)
                     and len(tab_groups_payload.get("groups", [])) > 0
                 ):
-                    data_tools.save_tab_groups(tab_groups_payload)
+                    return tab_groups_payload
                 else:
                     print("备份文件缺少 tab_groups 数据，无法恢复")
-                    return False
-
-                return True
+                    return None
             finally:
                 # 删除临时文件
                 if os.path.exists(tmp_path):
@@ -652,7 +675,7 @@ class WebDAVTools:
 
         except Exception as e:
             print(f"WebDAV恢复失败: {e}")
-            return False
+            return None
 
     def list_backups(self) -> list:
         """
@@ -714,6 +737,65 @@ class DataTool:
     def _sqlite_db_path(self) -> str:
         return os.path.join(self.config.sqlite_path, "data.db")
 
+    @staticmethod
+    def merge_tab_groups(local_payload: dict, remote_payload: dict) -> dict:
+        merged = {"format": "account_manager_groups_v1", "groups": []}
+        groups_by_key = {}
+        groups_by_title = {}
+        record_contents = {}
+        used_record_ids = set()
+        fields = ("name", "account", "password", "note")
+
+        for source_index, payload in enumerate((local_payload, remote_payload)):
+            if not isinstance(payload, dict) or not isinstance(
+                payload.get("groups"), list
+            ):
+                raise ValueError("分组数据格式无效")
+            for group in payload["groups"]:
+                if not isinstance(group, dict) or not isinstance(
+                    group.get("records", []), list
+                ):
+                    raise ValueError("分组记录格式无效")
+                title = str(group.get("title") or "未命名分组")
+                group_key = str(
+                    group.get("key") or uuid.uuid5(uuid.NAMESPACE_URL, title)
+                )
+                target = groups_by_key.get(group_key)
+                if target is None and source_index == 1:
+                    candidates = groups_by_title.get(title, [])
+                    if len(candidates) == 1:
+                        target = candidates[0]
+                if target is None:
+                    target = {"key": group_key, "title": title, "records": []}
+                    merged["groups"].append(target)
+                    groups_by_title.setdefault(title, []).append(target)
+                    record_contents[group_key] = set()
+                groups_by_key[group_key] = target
+
+                for item in group.get("records", []):
+                    if not isinstance(item, dict):
+                        raise ValueError("账号记录格式无效")
+                    record = {field: str(item.get(field) or "") for field in fields}
+                    content = tuple(record[field] for field in fields)
+                    known_contents = record_contents[target["key"]]
+                    if content in known_contents:
+                        continue
+                    record_id = str(item.get("id") or "")
+                    seed = json.dumps(
+                        [target["key"], record_id, *content], ensure_ascii=False
+                    )
+                    suffix = 0
+                    while not record_id or record_id in used_record_ids:
+                        record_id = str(
+                            uuid.uuid5(uuid.NAMESPACE_URL, f"{seed}:{suffix}")
+                        )
+                        suffix += 1
+                    record["id"] = record_id
+                    target["records"].append(record)
+                    known_contents.add(content)
+                    used_record_ids.add(record_id)
+        return merged
+
     def _sqlite_connect(self):
         db_path = self._sqlite_db_path()
         os.makedirs(os.path.dirname(db_path) or ".", exist_ok=True)
@@ -721,17 +803,14 @@ class DataTool:
 
     @staticmethod
     def _ensure_group_tables(cursor):
-        cursor.execute(
-            """
+        cursor.execute("""
             CREATE TABLE IF NOT EXISTS tab_groups (
                 tab_key TEXT PRIMARY KEY,
                 title TEXT NOT NULL,
                 order_index INTEGER NOT NULL
             )
-            """
-        )
-        cursor.execute(
-            """
+            """)
+        cursor.execute("""
             CREATE TABLE IF NOT EXISTS tab_group_records (
                 id TEXT PRIMARY KEY,
                 tab_key TEXT NOT NULL,
@@ -741,8 +820,7 @@ class DataTool:
                 note TEXT,
                 order_index INTEGER NOT NULL
             )
-            """
-        )
+            """)
 
     @staticmethod
     def _store_from_tab_groups(payload: dict) -> Store:
