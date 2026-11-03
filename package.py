@@ -52,15 +52,6 @@ base_args = [
     "--remove-output",  # 覆盖旧输出
 ]
 
-# 显式打包 libffi，规避某些环境下 _ctypes 动态库缺失
-dll_dir = os.path.join(sys.base_prefix, "DLLs")
-for dll_name in ["libffi-8.dll", "libffi-7.dll"]:
-    dll_path = os.path.join(dll_dir, dll_name)
-    if os.path.exists(dll_path):
-        base_args.append(f"--include-data-files={dll_path}={dll_name}")
-        print(f"包含动态库: {dll_name}")
-        break
-
 # 合并所有参数
 nuitka_cmd = base_args + ["main.py"]
 
