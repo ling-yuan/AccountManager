@@ -1,3 +1,5 @@
+import os
+import sys
 from PyQt5 import QtGui, QtWidgets
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtCore import pyqtSignal, Qt
@@ -34,7 +36,9 @@ class SettingsWindow(Ui_SettingsForm, QDialog):
         # 隐藏标题栏帮助按钮
         # self.setWindowFlags(Qt.WindowType.FramelessWindowHint) -----------------------------
         # 通用设置
-        self.checkBox_auto_start.setChecked(self.config.auto_start)
+        auto_start_enabled = self.is_auto_open_enabled()
+        self.config.auto_start = auto_start_enabled
+        self.checkBox_auto_start.setChecked(auto_start_enabled)
         self.checkBox_use_systemtray.setChecked(self.config.use_systemtray)
         self.checkBox_auto_update.setChecked(self.config.auto_update)
         # 数据保存
@@ -345,9 +349,7 @@ class SettingsWindow(Ui_SettingsForm, QDialog):
             elif operation_type == "恢复":
                 if self.parent() and hasattr(self.parent(), "load_tab_groups"):
                     self.parent().load_tab_groups()
-                QtWidgets.QMessageBox.information(
-                    self, "成功", "数据恢复成功！"
-                )
+                QtWidgets.QMessageBox.information(self, "成功", "数据恢复成功！")
         else:
             QtWidgets.QMessageBox.critical(
                 self, "失败", f"数据{operation_type}失败！\n请检查WebDAV配置和网络连接"
@@ -417,26 +419,62 @@ class SettingsWindow(Ui_SettingsForm, QDialog):
         """
         import winreg
 
+        registry_path = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"
+        app_name = "Account Manager"
+
         if checked:
-            key = winreg.OpenKey(
+            with winreg.OpenKey(
                 winreg.HKEY_CURRENT_USER,
-                "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
+                registry_path,
                 0,
                 winreg.KEY_SET_VALUE,
-            )
-            winreg.SetValueEx(
-                key,
-                "Account Manager",
-                0,
-                winreg.REG_SZ,
-                self.config.folder_path + " --no-window",
-            )
-            winreg.CloseKey(key)
+            ) as key:
+                winreg.SetValueEx(
+                    key,
+                    app_name,
+                    0,
+                    winreg.REG_SZ,
+                    self.get_auto_open_command(),
+                )
         else:
-            key = winreg.OpenKey(
+            with winreg.OpenKey(
+                winreg.HKEY_CURRENT_USER,
+                registry_path,
+                0,
+                winreg.KEY_SET_VALUE,
+            ) as key:
+                try:
+                    winreg.DeleteValue(key, app_name)
+                except FileNotFoundError:
+                    pass
+
+        self.config.auto_start = checked
+
+    def get_auto_open_command(self) -> str:
+        """
+        获取开机自启动命令
+        """
+        if getattr(sys, "frozen", False):
+            return f'"{sys.executable}" --no-window'
+
+        script_path = os.path.abspath(sys.argv[0])
+        python_executable = sys.executable
+        return f'"{python_executable}" "{script_path}" --no-window'
+
+    def is_auto_open_enabled(self) -> bool:
+        """
+        检查注册表中是否已启用开机自启动
+        """
+        import winreg
+
+        try:
+            with winreg.OpenKey(
                 winreg.HKEY_CURRENT_USER,
                 "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
                 0,
-                winreg.KEY_SET_VALUE,
-            )
-            winreg.DeleteValue(key, "Account Manager")
+                winreg.KEY_READ,
+            ) as key:
+                value, _ = winreg.QueryValueEx(key, "Account Manager")
+                return bool(value)
+        except FileNotFoundError:
+            return False

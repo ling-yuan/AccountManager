@@ -25,7 +25,10 @@ class SingleApplication(QApplication):
             self.local_server.newConnection.connect(self.new_local_connection)
             # 监听，如果监听失败，可能是之前程序崩溃时残留进程服务导致的，移除残留进程
             if not self.local_server.listen(self.server_name):
-                if self.local_server.serverError() == QAbstractSocket.AddressInUseError:
+                if (
+                    self.local_server.serverError()
+                    == QAbstractSocket.SocketError.AddressInUseError
+                ):
                     QLocalServer.removeServer(self.server_name)
                     self.local_server.listen(self.server_name)
 
@@ -33,5 +36,8 @@ class SingleApplication(QApplication):
         if self.main_window is not None:
             self.main_window.raise_()
             self.main_window.activateWindow()
-            self.main_window.setWindowState((self.main_window.windowState() & ~Qt.WindowMinimized) | Qt.WindowActive)
+            self.main_window.setWindowState(
+                (self.main_window.windowState() & ~Qt.WindowState.WindowMinimized)
+                | Qt.WindowState.WindowActive
+            )
             self.main_window.show()

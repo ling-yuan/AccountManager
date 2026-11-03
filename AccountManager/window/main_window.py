@@ -11,6 +11,7 @@ from PyQt5.QtWidgets import (
     QTabWidget,
     QInputDialog,
     QMenu,
+    QTextEdit,
 )
 from PyQt5 import QtGui
 from PyQt5.QtCore import Qt, QTimer
@@ -23,6 +24,15 @@ from .ui.Ui_TableItem import Ui_TableItem
 from .settings_window import SettingsWindow
 from ..config import Config
 from ..tools.data_struct import Data, Store
+
+
+class PlainTextEdit(QTextEdit):
+    """自定义 QTextEdit,粘贴时只保留纯文本"""
+
+    def insertFromMimeData(self, source):
+        """重写粘贴方法,只插入纯文本"""
+        if source.hasText():
+            self.insertPlainText(source.text())
 
 
 class MainWindow(Ui_MainWindow, QMainWindow):
@@ -52,6 +62,14 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     def __init_ui__(self):
         # 设置窗口固定大小
         self.setFixedSize(self.width(), self.height())
+        # 替换 textEdit_note 为自定义的 PlainTextEdit
+        old_textedit = self.textEdit_note
+        self.textEdit_note = PlainTextEdit(self.centralwidget)
+        self.textEdit_note.setFont(old_textedit.font())
+        self.textEdit_note.setObjectName("textEdit_note")
+        # 替换布局中的控件
+        self.gridLayout.replaceWidget(old_textedit, self.textEdit_note)
+        old_textedit.deleteLater()
         # 初始化setting窗口
         self.settings_window = SettingsWindow(parent=self)
         self.settings_window.setWindowModality(Qt.WindowModality.ApplicationModal)
